@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cognia – Test Management</title>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background: #f7f8fa;
+      color: #1a1a2e;
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* ─── Sidebar ─── */
+    .sidebar {
+      width: 210px;
+      background: #fff;
+      border-right: 1px solid #e9e9e9;
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      padding-top: 20px;
+    }
+    .sidebar-logo { padding: 0 20px 24px; }
+    .sidebar-logo svg { display: block; }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 16px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #555;
+      cursor: pointer;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      position: relative;
+      transition: background 0.15s;
+      user-select: none;
+    }
+    .nav-item:hover { background: #f0f2f8; }
+    .nav-item.active { background: #eef0f8; color: #2a3766; font-weight: 600; }
+    .nav-item.active::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 3px;
+      background: #2a3766;
+      border-radius: 0 2px 2px 0;
+    }
+    .nav-item svg { flex-shrink: 0; }
+    .nav-chevron { margin-left: auto; flex-shrink: 0; }
+
+    /* ─── Main ─── */
+    .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+    .topbar {
+      background: #fff;
+      border-bottom: 1px solid #e9e9e9;
+      height: 52px;
+      display: flex; align-items: center;
+      padding: 0 24px; gap: 16px;
+      flex-shrink: 0;
+    }
+    .topbar-left { display: flex; align-items: center; }
+    .topbar-right { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+
+    .icon-btn {
+      width: 32px; height: 32px;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 6px; cursor: pointer; color: #777;
+      transition: background 0.15s;
+    }
+    .icon-btn:hover { background: #f0f2f8; }
+
+    .avatar {
+      width: 32px; height: 32px;
+      border-radius: 9999px; background: #2a3766; color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 700;
+    }
+    .user-label {
+      font-size: 13px; font-weight: 500; color: #1a1a2e;
+      display: flex; align-items: center; gap: 4px; cursor: pointer;
+    }
+
+    /* ─── Pages ─── */
+    .page { display: none; flex: 1; overflow-y: auto; padding: 28px 32px; opacity: 0; }
+    .page.active { display: block; animation: fadeIn 0.15s ease forwards; }
+    @keyframes fadeIn { to { opacity: 1; } }
+
+    /* ─── Dashboard ─── */
+    .page-title { font-size: 22px; font-weight: 700; color: #1a1a2e; margin-bottom: 4px; }
+    .page-subtitle { font-size: 13px; color: #888; margin-bottom: 24px; }
+    .stats-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; margin-bottom: 28px; }
+    .stat-card { background: #fff; border: 1px solid #e9e9e9; border-radius: 10px; padding: 20px; }
+    .stat-card-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 14px; }
+    .stat-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+    .stat-icon.blue   { background: #eef2ff; color: #4a6cf7; }
+    .stat-icon.green  { background: #edfaf3; color: #2dbe6c; }
+    .stat-icon.purple { background: #f3eeff; color: #9c5cf7; }
+    .stat-icon.orange { background: #fff4ee; color: #ff8c42; }
+    .stat-badge { font-size: 12px; font-weight: 600; color: #2dbe6c; }
+    .stat-label { font-size: 12px; color: #888; margin-bottom: 4px; }
+    .stat-value { font-size: 24px; font-weight: 700; color: #1a1a2e; }
+    .section-title { font-size: 15px; font-weight: 700; color: #1a1a2e; margin-bottom: 14px; }
+    .actions-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; margin-bottom: 28px; }
+    .action-card { background: #fff; border: 1px solid #e9e9e9; border-radius: 10px; padding: 24px 20px; cursor: pointer; transition: box-shadow 0.15s, border-color 0.15s; }
+    .action-card:hover { box-shadow: 0 4px 16px rgba(42,55,102,0.08); border-color: #d0d5e8; }
+    .action-icon { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-bottom: 14px; }
+    .action-icon.blue   { background: #eef2ff; color: #4a6cf7; }
+    .action-icon.green  { background: #edfaf3; color: #2dbe6c; }
+    .action-icon.purple { background: #f3eeff; color: #9c5cf7; }
+    .action-name { font-size: 14px; font-weight: 600; color: #1a1a2e; margin-bottom: 4px; }
+    .action-desc { font-size: 12px; color: #888; }
+    .activity-list { background: #fff; border: 1px solid #e9e9e9; border-radius: 10px; overflow: hidden; }
+    .activity-item { display: flex; align-items: center; gap: 14px; padding: 16px 20px; border-bottom: 1px solid #f0f0f0; }
+    .activity-item:last-child { border-bottom: none; }
+    .activity-icon { width: 36px; height: 36px; border-radius: 8px; background: #f4f5f8; color: #777; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .activity-info { flex: 1; }
+    .activity-name { font-size: 13px; font-weight: 600; color: #1a1a2e; margin-bottom: 2px; }
+    .activity-sub { font-size: 12px; color: #888; }
+    .activity-time { font-size: 12px; color: #aaa; display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
+
+    /* ─── Shared components ─── */
+
+    /* Max-width container */
+    .constrained {
+      max-width: 1320px;
+      width: 100%;
+    }
+
+    /* Breadcrumb */
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #888; margin-bottom: 18px; }
+    .bc-link { color: #2a3766; font-weight: 600; cursor: pointer; }
+    .bc-link:hover { text-decoration: underline; }
+    .bc-sep { color: #ccc; font-size: 13px; }
+    .bc-current { color: #555; }
+
+    /* Chevron back title */
+    .back-title {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      color: #1a1a2e;
+    }
+    .back-title-chevron {
+      width: 28px; height: 28px;
+      border: 1px solid #d0d5e8;
+      border-radius: 6px;
+      background: #fff;
+      display: flex; align-items: center; justify-content: center;
+      color: #555;
+      flex-shrink: 0;
+    }
+    .back-title-text { font-size: 20px; font-weight: 700; color: #1a1a2e; }
+
+    /* Unified field */
+    .field-label {
+      font-size: 12px; font-weight: 600; color: #1a1a2e;
+      margin-bottom: 5px;
+      display: flex; align-items: center; gap: 5px;
+    }
+    .field-label .req { color: #ff554d; }
+    .field-label .help-icon {
+      width: 14px; height: 14px;
+      border-radius: 9999px; border: 1.5px solid #bbb;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 9px; color: #888; font-weight: 700; cursor: default;
+    }
+    .field-input {
+      width: 100%;
+      border: 1px solid #d0d5e8; border-radius: 6px;
+      padding: 9px 12px;
+      font-family: 'Open Sans', sans-serif; font-size: 13px; color: #1a1a2e;
+      background: #fff; outline: none;
+      transition: border-color 0.13s, box-shadow 0.13s;
+    }
+    .field-input:focus { border-color: #2a3766; box-shadow: 0 0 0 3px rgba(42,55,102,0.09); }
+    .field-input::placeholder { color: #c0c5d4; }
+    .field-input:disabled, .field-input[readonly] {
+      background: #f7f8fa; color: #555; cursor: default;
+      border-color: #e9e9e9;
+    }
+    textarea.field-input { resize: vertical; min-height: 88px; }
+    textarea.field-input:disabled, textarea.field-input[readonly] { background: #f7f8fa; color: #555; }
+    .field-hint { font-size: 11px; color: #999; margin-top: 4px; }
+    .field-group { display: flex; flex-direction: column; }
+
+    /* Grids */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+
+    /* Buttons */
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 7px;
+      background: #75138c; color: #fff; border: none;
+      border-radius: 6px; padding: 9px 20px;
+      font-family: 'Open Sans', sans-serif; font-size: 13px; font-weight: 600;
+      cursor: pointer; transition: background 0.13s; white-space: nowrap;
+    }
+    .btn-primary:hover { background: #5e0f70; }
+
+    .btn-secondary {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: #fff; border: 1px solid #d0d5e8; border-radius: 6px;
+      padding: 8px 14px;
+      font-family: 'Open Sans', sans-serif; font-size: 12px; font-weight: 600; color: #555;
+      cursor: pointer; transition: background 0.13s, border-color 0.13s; white-space: nowrap;
+    }
+    .btn-secondary:hover { background: #f0f2f8; border-color: #b8bfd6; }
+
+    .btn-ghost {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: transparent; border: 1px solid #d0d5e8; border-radius: 6px;
+      padding: 7px 14px;
+      font-family: 'Open Sans', sans-serif; font-size: 12px; font-weight: 600; color: #555;
+      cursor: pointer; transition: background 0.13s; white-space: nowrap;
+    }
+    .btn-ghost:hover { background: #f0f2f8; }
+
+    .btn-danger {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: #fff; border: 1px solid #ffb3b0; border-radius: 6px;
+      padding: 7px 14px;
+      font-family: 'Open Sans', sans-serif; font-size: 12px; font-weight: 600; color: #cc3a33;
+      cursor: pointer; transition: background 0.13s; white-space: nowrap;
+    }
+    .btn-danger:hover { background: #fff0ef; }
+
+    /* Card */
+    .card { background: #fff; border: 1px solid #e9e9e9; border-radius: 10px; overflow: hidden; }
+
+    /* Panel */
+    .panel { background: #fff; border: 1px solid #e9e9e9; border-radius: 10px; overflow: hidden; margin-bottom: 20px; }
+    .panel-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 13px 20px;
+      border-bottom: 1px solid #e9e9e9; background: #fff;
+    }
+    .panel-header-left { display: flex; align-items: center; gap: 9px; font-size: 13px; font-weight: 700; color: #1a1a2e; }
+    .panel-header-accent { display: none; }
+    .panel-body { padding: 22px; }
+    .panel-form-actions { display: flex; justify-content: flex-end; padding-top: 8px; }
+
+    /* sm-btn */
+    .sm-btn {
+      width: 30px; height: 30px;
+      border: 1px solid #d0d5e8; border-radius: 6px;
+      background: #fff; display: flex; align-items: center; justify-content: center;
+      cursor: pointer; color: #777; transition: all 0.12s; flex-shrink: 0;
+    }
+    .sm-btn:hover              { background: #f0f2f8; border-color: #b8bfd6; }
+    .sm-btn.edit-action:hover  { background: #fffbea; border-color: #ffe580; color: #c9a000; }
+    .sm-btn.danger:hover       { background: #fff0ef; border-color: #ffb3b0; color: #ff554d; }
+
+    /* Chips */
+    .chip {
+      display: inline-flex; align-items: center;
+      padding: 2px 8px; border-radius: 4px;
+      font-size: 11px; font-weight: 600;
+      background: #eef0f8; color: #2a3766; border: 1px solid #d0d5e8;
+      white-space: nowrap;
+    }
+    .chip.required { background: #fff4ec; color: #c45000; border-color: #ffd4b0; }
+    .chip.count    { background: #f0f2f8; color: #2a3766; border-color: #d0d5e8; }
+
+    /* btn-add-inline */
+    .btn-add-inline {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: #fff; border: 1px solid #d0d5e8; border-radius: 6px;
+      padding: 5px 11px;
+      font-family: 'Open Sans', sans-serif; font-size: 11px; font-weight: 600; color: #2a3766;
+      cursor: pointer; transition: background 0.12s;
+    }
+    .btn-add-inline:hover { background: #eef0f8; }
+
+    /* ─── TEST MANAGEMENT — LIST ─── */
+    .tm-page-inner { max-width: 1320px; width: 100%; margin: 0 auto; }
+
+    .tm-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 22px;
+    }
+    .tm-title-group { display: flex; align-items: center; gap: 10px; }
+    .tm-title { font-size: 20px; font-weight: 700; color: #1a1a2e; }
+    .tm-count { background: #eef0f8; color: #2a3766; border-radius: 9999px; padding: 2px 10px; font-size: 12px; font-weight: 600; }
+
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    thead tr { border-bottom: 1px solid #e9e9e9; }
+    th {
+      text-align: left; padding: 11px 16px;
+      font-size: 11px; font-weight: 700; color: #888;
+      text-transform: uppercase; letter-spacing: 0.04em;
+      white-space: nowrap; background: #fafbfd;
+    }
+    tbody tr { border-bottom: 1px solid #f0f2f5; transition: background 0.12s; cursor: pointer; }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: #f0f3fc; }
+
+    td { padding: 15px 16px; vertical-align: middle; }
+    .td-title { font-size: 13px; font-weight: 600; color: #1a1a2e; }
+    .td-sub   { font-size: 12px; color: #999; margin-top: 2px; }
+
+    .id-chip {
+      display: inline-block;
+      font-size: 11.5px; font-family: 'Courier New', Courier, monospace; font-weight: 500;
+      color: #2a3766; background: #eef0f8; border: 1px solid #d0d5e8;
+      padding: 2px 8px; border-radius: 4px;
+    }
+    .td-structure { font-size: 12px; color: #555; white-space: nowrap; }
+    .td-date      { font-size: 12px; color: #777; white-space: nowrap; }
+
+    .status-badge, .type-badge {
+      display: inline-flex; align-items: center;
+      padding: 2px 9px; border-radius: 9999px;
+      font-size: 11px; font-weight: 600; white-space: nowrap;
+    }
+    .status-badge.completed  { background: #edfaf3; color: #1a9152; border: 1px solid #b6ecd1; }
+    .status-badge.scheduled  { background: #eef2ff; color: #4a6cf7; border: 1px solid #c5d0fc; }
+    .status-badge.cancelled  { background: #fff0ef; color: #cc3a33; border: 1px solid #ffb3b0; }
+    .status-badge.draft      { background: #f4f5f8; color: #777;    border: 1px solid #d8dae3; }
+    .type-badge.formative    { background: #fff4ee; color: #c45000; border: 1px solid #ffd4b0; }
+    .type-badge.summative    { background: #f3eeff; color: #7c3aed; border: 1px solid #d8b4fe; }
+    .type-badge.interim      { background: #eef2ff; color: #2a3766; border: 1px solid #c5d0fc; }
+
+    /* Row arrow indicator */
+
+    /* ─── DETAIL / EDIT PAGE shared ─── */
+    .detail-page-inner {
+      max-width: 1320px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .detail-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 24px; gap: 16px; flex-wrap: wrap;
+    }
+
+    .detail-actions { display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
+
+    /* ─── TEST STRUCTURE ─── */
+    .ts-part { border: 1px solid #e9e9e9; border-radius: 8px; overflow: hidden; margin-bottom: 12px; }
+    .ts-part:last-child { margin-bottom: 0; }
+    .ts-part-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 11px 16px; background: #fafbfd; border-bottom: 1px solid #e9e9e9;
+    }
+    .ts-part-left { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: #1a1a2e; }
+    .ts-part-actions { display: flex; gap: 5px; align-items: center; }
+
+    .ts-section { padding: 10px 14px 0; }
+    .ts-section-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 9px 12px; background: #f4f5f8; border-radius: 7px; margin-bottom: 8px;
+    }
+    .ts-section-left { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 600; color: #1a1a2e; }
+
+    .ts-items { padding: 0 14px 12px; }
+    .ts-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 9px 12px; border: 1px solid #e9e9e9; border-radius: 7px;
+      margin-bottom: 6px; background: #fff; transition: border-color 0.12s;
+    }
+    .ts-item:last-child { margin-bottom: 0; }
+    .ts-item:hover { border-color: #d0d5e8; }
+    .ts-item-icon { color: #d4962a; flex-shrink: 0; }
+    .ts-item-name { font-size: 12px; font-weight: 600; color: #1a1a2e; flex: 1; display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+    .ts-item-id   { font-size: 11px; color: #aaa; font-weight: 400; font-family: monospace; }
+    .ts-item-actions { display: flex; gap: 4px; flex-shrink: 0; }
+
+    /* ─── CREATE PAGE ─── */
+    .create-page-inner {
+      max-width: 1320px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .create-layout {
+      display: grid;
+      grid-template-columns: 1fr 280px;
+      gap: 20px;
+    }
+.create-card-body {
+      background: #fff; border: 1px solid #e9e9e9;
+      border-top: none; border-radius: 0 0 10px 10px; padding: 24px;
+    }
+    .create-form-actions {
+      display: flex; justify-content: space-between; align-items: center;
+      padding-top: 10px; margin-top: 4px; border-top: 1px solid #f0f0f0;
+    }
+
+    /* Reference sidebar */
+    .ref-panel { background: #fff; border: 1px solid #e9e9e9; border-radius: 10px; overflow: hidden; }
+    .ref-panel-header {
+      padding: 13px 16px; border-bottom: 1px solid #e9e9e9;
+      font-size: 12px; font-weight: 700; color: #1a1a2e;
+      display: flex; align-items: center; gap: 7px;
+    }
+    .ref-panel-body { padding: 16px; font-size: 12px; color: #444; line-height: 1.6; }
+    .ref-panel-body strong { font-weight: 700; color: #1a1a2e; }
+    .ref-section-title { font-size: 11px; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: 0.05em; margin: 14px 0 6px; }
+    .ref-section-title:first-of-type { margin-top: 0; }
+    .hierarchy-tree { list-style: none; }
+    .hierarchy-tree li { display: flex; align-items: flex-start; gap: 6px; padding: 3px 0; }
+    .hierarchy-tree li.l1 { padding-left: 14px; }
+    .hierarchy-tree li.l2 { padding-left: 28px; }
+    .hierarchy-tree li.l3 { padding-left: 42px; }
+    .hierarchy-tree .ht-icon  { flex-shrink: 0; margin-top: 1px; }
+    .hierarchy-tree .ht-label { font-weight: 600; color: #1a1a2e; }
+    .hierarchy-tree .ht-note  { color: #999; font-size: 11px; display: block; }
+    .key-list { list-style: none; }
+    .key-list li { padding: 3px 0; display: flex; gap: 6px; }
+    .key-list li::before { content: '•'; color: #2a3766; font-weight: 700; flex-shrink: 0; }
+
+    /* ─── View-only field display ─── */
+    .view-field {
+      width: 100%;
+      border: 1px solid #e9e9e9; border-radius: 6px;
+      padding: 9px 12px;
+      font-family: 'Open Sans', sans-serif; font-size: 13px; color: #1a1a2e;
+      background: #f7f8fa; line-height: 1.5;
+      min-height: 38px;
+    }
+    .view-field.multiline { min-height: 88px; }
+
+    /* Edit-mode toggle: show/hide */
+    .edit-mode .view-field    { display: none; }
+    .edit-mode .field-input   { display: block; }
+    .view-mode .view-field    { display: block; }
+    .view-mode .field-input   { display: none; }
+    .view-mode textarea.field-input { display: none; }
+    .view-mode .view-field.multiline { display: block; }
+
+    /* View/Edit state toggle on Save button */
+    .save-actions { display: flex; gap: 8px; justify-content: flex-end; padding-top: 8px; }
+  </style>
+</head>
+<body>
+
+<!-- ═══ SIDEBAR ═══ -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <img src="https://www.cognia.org/wp-content/webp-express/webp-images/doc-root/wp-content/uploads/2019/08/cropped-logo-300.png.webp" alt="Cognia" style="height:32px;width:auto;display:block;">
+  </div>
+  <nav>
+    <div class="nav-item active" data-page="dashboard">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      Dashboard
+    </div>
+    <div class="nav-item" data-page="">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      <span style="overflow:hidden;text-overflow:ellipsis">Student Roster Manag…</span>
+      <svg class="nav-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="nav-item" data-page="">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="15" y2="17"/></svg>
+      Item Management
+    </div>
+    <div class="nav-item" data-page="test-management">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+      Test Management
+    </div>
+    <div class="nav-item" data-page="">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      Curriculum
+    </div>
+  </nav>
+</aside>
+
+<!-- ═══ MAIN ═══ -->
+<div class="main">
+
+  <header class="topbar">
+    <div class="topbar-left">
+      <div class="icon-btn">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="icon-btn">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+      </div>
+      <div class="icon-btn">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </div>
+      <div class="avatar">A</div>
+      <div class="user-label">
+        School Admin
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+    </div>
+  </header>
+
+  <!-- ════════════════════════════
+       DASHBOARD
+  ═════════════════════════════ -->
+  <div class="page active" id="page-dashboard">
+    <h1 class="page-title">School Administrator Dashboard</h1>
+    <p class="page-subtitle">Welcome back! Here's an overview of your assessment activities</p>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-card-top">
+          <div class="stat-icon blue"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+          <span class="stat-badge">+12%</span>
+        </div>
+        <div class="stat-label">Total Students</div><div class="stat-value">156</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-top">
+          <div class="stat-icon green"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="15" y2="17"/></svg></div>
+          <span class="stat-badge">+3</span>
+        </div>
+        <div class="stat-label">Active Tests</div><div class="stat-value">8</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-top">
+          <div class="stat-icon purple"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><circle cx="10" cy="14" r="2"/><path d="M14 14h2"/></svg></div>
+          <span class="stat-badge">+28</span>
+        </div>
+        <div class="stat-label">Questions</div><div class="stat-value">342</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-top">
+          <div class="stat-icon orange"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg></div>
+          <span class="stat-badge">+5%</span>
+        </div>
+        <div class="stat-label">Avg. Score</div><div class="stat-value">78%</div>
+      </div>
+    </div>
+    <div class="section-title">Quick Actions</div>
+    <div class="actions-grid">
+      <div class="action-card"><div class="action-icon blue"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><circle cx="10" cy="14" r="2"/><path d="M14 14h2"/></svg></div><div class="action-name">Questions</div><div class="action-desc">Create and manage questions</div></div>
+      <div class="action-card"><div class="action-icon green"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="15" y2="17"/></svg></div><div class="action-name">Tests</div><div class="action-desc">Build and assign tests</div></div>
+      <div class="action-card"><div class="action-icon purple"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div><div class="action-name">Curriculum</div><div class="action-desc">Organize learning materials</div></div>
+    </div>
+    <div class="section-title">Recent Activity</div>
+    <div class="activity-list">
+      <div class="activity-item"><div class="activity-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><div class="activity-info"><div class="activity-name">Math Quiz - Chapter 5</div><div class="activity-sub">Completed by 24 students</div></div><div class="activity-time"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>2 hours ago</div></div>
+      <div class="activity-item"><div class="activity-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><div class="activity-info"><div class="activity-name">New question added</div><div class="activity-sub">Algebra - Quadratic Equations</div></div><div class="activity-time"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>5 hours ago</div></div>
+      <div class="activity-item"><div class="activity-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg></div><div class="activity-info"><div class="activity-name">Test graded</div><div class="activity-sub">Science Test - Unit 3</div></div><div class="activity-time"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>1 day ago</div></div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════
+       TEST MANAGEMENT — LIST
+  ═════════════════════════════ -->
+  <div class="page" id="page-test-management">
+    <div class="tm-page-inner">
+      <div class="tm-header">
+        <div class="tm-title-group">
+          <span class="tm-title">Assessment Tests</span>
+          <span class="tm-count">3 tests</span>
+        </div>
+        <button class="btn-primary" id="btn-create-test">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          New Test
+        </button>
+      </div>
+
+      <div class="card">
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Identifier</th>
+              <th>Type</th>
+              <th>Structure</th>
+              <th>Date of Test</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="test-row" data-test="demo-epiuse">
+              <td><div class="td-title">Demo</div></td>
+              <td><span class="id-chip">EPIUSE Demo</span></td>
+              <td><span class="type-badge formative">Formative</span></td>
+              <td><span class="td-structure">1 part · 1 section · 2 items</span></td>
+              <td><span class="td-date">20 Nov 2025</span></td>
+              <td><span class="status-badge scheduled">Scheduled</span></td>
+            </tr>
+            <tr class="test-row" data-test="demo-nov20">
+              <td><div class="td-title">Demo</div><div class="td-sub">Demo Nov 20</div></td>
+              <td><span class="id-chip">Test Nov 20</span></td>
+              <td><span class="type-badge summative">Summative</span></td>
+              <td><span class="td-structure">1 part · 1 section · 2 items</span></td>
+              <td><span class="td-date">20 Nov 2025</span></td>
+              <td><span class="status-badge completed">Completed</span></td>
+            </tr>
+            <tr class="test-row" data-test="math-grade5">
+              <td><div class="td-title">Math Grade 5 Test</div></td>
+              <td><span class="id-chip">Math Grade 5 Test</span></td>
+              <td><span class="type-badge interim">Interim</span></td>
+              <td><span class="td-structure">2 parts · 3 sections · 6 items</span></td>
+              <td><span class="td-date">14 Oct 2025</span></td>
+              <td><span class="status-badge draft">Draft</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════
+       ASSESSMENT DETAIL (view/edit)
+  ═════════════════════════════ -->
+  <div class="page" id="page-view-test">
+    <div class="detail-page-inner">
+
+      <div class="detail-header">
+        <!-- Chevron + title back navigation -->
+        <div class="back-title" id="detail-back-btn">
+          <div class="back-title-chevron">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+          </div>
+          <span class="back-title-text" id="detail-title">Math Grade 5 Test</span>
+        </div>
+
+        <div class="detail-actions">
+          <button class="btn-ghost" id="btn-detail-preview">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+            Preview
+          </button>
+          <button class="btn-ghost" id="btn-detail-export-xml">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="8 17 12 21 16 17"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.29"/></svg>
+            Export to XML
+          </button>
+          <button class="btn-ghost" id="btn-detail-edit">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            Edit
+          </button>
+          <button class="btn-danger" id="btn-detail-delete">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+            Delete
+          </button>
+        </div>
+      </div>
+
+      <!-- Metadata panel -->
+      <div class="panel" id="metadata-panel">
+        <div class="panel-header">
+          <div class="panel-header-left">
+            <div class="panel-header-accent navy"></div>
+            Test Details
+          </div>
+          <!-- Save/Cancel only shown in edit mode -->
+          <div class="save-actions" id="metadata-save-actions" style="display:none">
+            <button class="btn-ghost" id="btn-metadata-cancel">Cancel</button>
+            <button class="btn-primary" id="btn-metadata-save">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              Save
+            </button>
+          </div>
+        </div>
+        <div class="panel-body view-mode" id="metadata-body">
+          <div class="grid-2" style="margin-bottom:16px">
+            <div class="field-group">
+              <div class="field-label">Identifier</div>
+              <div class="view-field">Math Grade 5 Test</div>
+              <input class="field-input" type="text" value="Math Grade 5 Test">
+            </div>
+            <div class="field-group">
+              <div class="field-label">Title</div>
+              <div class="view-field">Math Grade 5 Test</div>
+              <input class="field-input" type="text" value="Math Grade 5 Test">
+            </div>
+          </div>
+          <div class="field-group" style="margin-bottom:16px">
+            <div class="field-label">Description</div>
+            <div class="view-field multiline">Math Grade 5 Test</div>
+            <textarea class="field-input">Math Grade 5 Test</textarea>
+          </div>
+          <div class="grid-3">
+            <div class="field-group">
+              <div class="field-label">Language</div>
+              <div class="view-field">en-US</div>
+              <input class="field-input" type="text" value="en-US">
+            </div>
+            <div class="field-group">
+              <div class="field-label">Tool Name</div>
+              <div class="view-field">Cognia TEI authoring system</div>
+              <input class="field-input" type="text" value="Cognia TEI authoring system">
+            </div>
+            <div class="field-group">
+              <div class="field-label">Tool Version</div>
+              <div class="view-field">1.0.0</div>
+              <input class="field-input" type="text" value="1.0.0">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Test structure panel (always read-only) -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-header-left">
+            <div class="panel-header-accent coral"></div>
+            Test Structure
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="ts-part">
+            <div class="ts-part-header">
+              <div class="ts-part-left">
+                Part A
+                <span class="chip">nonlinear</span>
+                <span class="chip">individual</span>
+              </div>
+            </div>
+            <div class="ts-section">
+              <div class="ts-section-header">
+                <div class="ts-section-left">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+                  Part A – Section 1
+                  <span class="chip count">2 items</span>
+                </div>
+              </div>
+              <div class="ts-items">
+                <div class="ts-item">
+                  <div class="ts-item-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+                  <div class="ts-item-name">My First Choice Interaction <span class="ts-item-id">item_my_first_choice_inte</span><span class="chip required">Required</span><span class="chip">Fixed</span></div>
+                </div>
+                <div class="ts-item">
+                  <div class="ts-item-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+                  <div class="ts-item-name">My First Gap Match <span class="ts-item-id">item_my_first_gap_match</span><span class="chip required">Required</span><span class="chip">Fixed</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ════════════════════════════
+       CREATE TEST
+  ═════════════════════════════ -->
+  <div class="page" id="page-create-test">
+    <div class="create-page-inner">
+
+      <div class="back-title" id="create-back-btn" style="margin-bottom:20px">
+        <div class="back-title-chevron">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+        </div>
+        <span class="back-title-text">New Test</span>
+      </div>
+
+      <div class="create-layout">
+        <!-- Form card -->
+        <div>
+          <div class="panel-header" style="border-radius:10px 10px 0 0;border:1px solid #e9e9e9;border-bottom:1px solid #e9e9e9;">
+            <div class="panel-header-left">
+              <div class="panel-header-accent navy"></div>
+              Test Details
+            </div>
+          </div>
+          <div class="create-card-body">
+            <div class="grid-2" style="margin-bottom:16px">
+              <div class="field-group">
+                <div class="field-label">Identifier <span class="req">*</span> <span class="help-icon">?</span></div>
+                <input class="field-input" type="text" placeholder="e.g., test-math-grade5-2024">
+                <div class="field-hint">Unique ID used in QTI XML</div>
+              </div>
+              <div class="field-group">
+                <div class="field-label">Name <span class="req">*</span></div>
+                <input class="field-input" type="text" placeholder="e.g., Grade 5 Mathematics Assessment">
+                <div class="field-hint">Displayed to candidates</div>
+              </div>
+            </div>
+            <div class="grid-2" style="margin-bottom:16px">
+              <div class="field-group">
+                <div class="field-label">Type <span class="req">*</span></div>
+                <select class="field-input">
+                  <option value="" disabled selected>Select type…</option>
+                  <option value="formative">Formative</option>
+                  <option value="summative">Summative</option>
+                  <option value="interim">Interim</option>
+                </select>
+              </div>
+              <div class="field-group">
+                <div class="field-label">Status <span class="req">*</span></div>
+                <select class="field-input">
+                  <option value="" disabled selected>Select status…</option>
+                  <option value="draft">Draft</option>
+                  <option value="scheduled">Scheduled</option>
+                  <option value="completed">Completed</option>
+                  <option value="cancelled">Cancelled</option>
+                </select>
+              </div>
+            </div>
+            <div class="grid-2" style="margin-bottom:16px">
+              <div class="field-group">
+                <div class="field-label">Date of Test</div>
+                <input class="field-input" type="date">
+              </div>
+              <div class="field-group">
+                <div class="field-label">Language <span class="help-icon">?</span></div>
+                <input class="field-input" type="text" value="en-US">
+                <div class="field-hint">e.g., en-US, es-ES, fr-FR</div>
+              </div>
+            </div>
+            <div class="field-group" style="margin-bottom:16px">
+              <div class="field-label">Description</div>
+              <textarea class="field-input" placeholder="Describe the purpose and content of this assessment…"></textarea>
+            </div>
+            <div class="grid-2" style="margin-bottom:20px">
+              <div class="field-group">
+                <div class="field-label">Tool Name</div>
+                <input class="field-input" type="text" placeholder="e.g., TEI Authoring System">
+                <div class="field-hint">Tool that created this test</div>
+              </div>
+              <div class="field-group">
+                <div class="field-label">Tool Version</div>
+                <input class="field-input" type="text" placeholder="e.g., 1.0.0">
+                <div class="field-hint">Tool version number</div>
+              </div>
+            </div>
+            <div class="create-form-actions">
+              <div></div>
+              <div style="display:flex;gap:8px;align-items:center;">
+                <button class="btn-primary">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                  Create Test
+                </button>
+                <button class="btn-ghost" id="btn-create-cancel">Cancel</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Reference sidebar -->
+        <div class="ref-panel">
+          <div class="ref-panel-header">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" color="#2a3766"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+            QTI 3.0 Structure
+          </div>
+          <div class="ref-panel-body">
+            <div class="ref-section-title">Hierarchy</div>
+            <ul class="hierarchy-tree">
+              <li><svg class="ht-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#2a3766" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><div><span class="ht-label">Assessment Test</span><span class="ht-note">Top level</span></div></li>
+              <li class="l1"><svg class="ht-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg><div><span class="ht-label">Test Part</span><span class="ht-note">At least 1 required</span></div></li>
+              <li class="l2"><svg class="ht-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg><div><span class="ht-label">Assessment Section</span><span class="ht-note">At least 1 per part</span></div></li>
+              <li class="l3"><svg class="ht-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#d4962a" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><div><span class="ht-label">Item References</span><span class="ht-note">Links to TEI items</span></div></li>
+            </ul>
+            <div class="ref-section-title">Key Attributes</div>
+            <ul class="key-list">
+              <li><div><strong>Navigation:</strong> Linear or Nonlinear</div></li>
+              <li><div><strong>Submission:</strong> Individual or Simultaneous</div></li>
+              <li><div><strong>Time Limits:</strong> Test, part, or section level</div></li>
+              <li><div><strong>Sections:</strong> Can be nested</div></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<script>
+  const navItems = document.querySelectorAll('.nav-item[data-page]');
+
+  function showPage(pageId, activeNavPage) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    const target = document.getElementById('page-' + pageId);
+    if (target) target.classList.add('active');
+    navItems.forEach(n => n.classList.remove('active'));
+    const nav = document.querySelector(`.nav-item[data-page="${activeNavPage || pageId}"]`);
+    if (nav) nav.classList.add('active');
+  }
+
+  // Sidebar nav
+  navItems.forEach(item => {
+    item.addEventListener('click', () => {
+      if (item.dataset.page) showPage(item.dataset.page);
+    });
+  });
+
+  // ── Test list: click row → detail view ──
+  document.querySelectorAll('.test-row').forEach(row => {
+    row.addEventListener('click', () => {
+      // Set the title based on the row clicked
+      const titleEl = row.querySelector('.td-title');
+      const testTitle = titleEl ? titleEl.textContent.trim() : 'Assessment Test';
+      document.getElementById('detail-title').textContent = testTitle;
+
+      // Ensure we're in view mode
+      setMetadataMode('view');
+
+      showPage('view-test', 'test-management');
+    });
+  });
+
+  // ── Detail page: back button ──
+  document.getElementById('detail-back-btn').addEventListener('click', () => {
+    setMetadataMode('view');
+    showPage('test-management');
+  });
+
+  // ── Detail page: Edit button ──
+  document.getElementById('btn-detail-edit').addEventListener('click', () => {
+    setMetadataMode('edit');
+  });
+
+  // ── Detail page: metadata Save ──
+  document.getElementById('btn-metadata-save').addEventListener('click', () => {
+    setMetadataMode('view');
+  });
+
+  // ── Detail page: metadata Cancel ──
+  document.getElementById('btn-metadata-cancel').addEventListener('click', () => {
+    setMetadataMode('view');
+  });
+
+  // ── Detail page: Preview ──
+  document.getElementById('btn-detail-preview').addEventListener('click', () => {
+    // no-op for prototype
+  });
+
+  // ── Detail page: Delete → back to list ──
+  document.getElementById('btn-detail-delete').addEventListener('click', () => {
+    if (confirm('Are you sure you want to delete this test? This action cannot be undone.')) {
+      showPage('test-management');
+    }
+  });
+
+  // ── Toggle metadata edit / view mode ──
+  function setMetadataMode(mode) {
+    const body = document.getElementById('metadata-body');
+    const saveActions = document.getElementById('metadata-save-actions');
+    const editBtn = document.getElementById('btn-detail-edit');
+
+    if (mode === 'edit') {
+      body.className = 'panel-body edit-mode';
+      saveActions.style.display = 'flex';
+      editBtn.style.display = 'none';
+    } else {
+      body.className = 'panel-body view-mode';
+      saveActions.style.display = 'none';
+      editBtn.style.display = '';
+    }
+  }
+
+  // ── New Test ──
+  document.getElementById('btn-create-test').addEventListener('click', () => {
+    showPage('create-test', 'test-management');
+  });
+
+  // ── Create: back / cancel ──
+  document.getElementById('btn-create-cancel').addEventListener('click', () => showPage('test-management'));
+  document.getElementById('create-back-btn').addEventListener('click', () => showPage('test-management'));
+</script>
+
+</body>
+</html>
