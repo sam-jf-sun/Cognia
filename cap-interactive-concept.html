@@ -261,7 +261,7 @@
       transition: background 0.12s, border-color 0.12s;
     }
     .page-btn:hover { background: #f0f2f8; border-color: #b8bfd6; }
-    .page-btn.active { background: #2a3766; color: #fff; border-color: #2a3766; cursor: default; }
+    .page-btn.active { background: rgba(117,19,140,0.25); color: #75138c; border-color: rgba(117,19,140,0.25); cursor: default; font-weight: 700; }
     .page-btn:disabled { opacity: 0.4; cursor: default; }
     .page-info { font-size: 12px; color: #888; margin-right: 8px; }
     .back-title-text { font-size: 20px; font-weight: 700; color: #1a1a2e; }
@@ -569,36 +569,30 @@
     /* ─── Test Builder Wizard ─── */
     .wz-hidden { display: none !important; }
 
-    /* Unified stepper */
-    .wz-stepper { display: flex; margin-bottom: 32px; }
-    .wz-stepper-item {
-      flex: 1; display: flex; flex-direction: column; align-items: center;
-      position: relative; cursor: default;
+    /* Wizard step card header with inline ring */
+    .wz-step-header { display: flex; align-items: center; gap: 16px; margin-bottom: 28px; }
+    .wz-step-ring { flex-shrink: 0; }
+    .wz-card-title { font-size: 18px; font-weight: 700; color: #1a1a2e; margin-bottom: 4px; }
+    /* Step transition animations */
+    #page-create-test { overflow-x: hidden; }
+    @keyframes wzExitLeft  { from { opacity:1; transform:translateX(0);       } to { opacity:0; transform:translateX(-22vw); } }
+    @keyframes wzExitRight { from { opacity:1; transform:translateX(0);       } to { opacity:0; transform:translateX(22vw);  } }
+    @keyframes wzEnterRight {
+      0%   { opacity:1; transform:translateX(100vw); }
+      72%  { opacity:1; transform:translateX(-10px); }
+      86%  { transform:translateX(5px); }
+      100% { opacity:1; transform:translateX(0); }
     }
-    .wz-stepper-item:not(:last-child)::after {
-      content: ''; position: absolute;
-      top: 15px; left: 50%; width: 100%; height: 2px;
-      background: #e9e9e9; z-index: 0; transition: background 0.3s;
+    @keyframes wzEnterLeft {
+      0%   { opacity:1; transform:translateX(-100vw); }
+      72%  { opacity:1; transform:translateX(10px); }
+      86%  { transform:translateX(-5px); }
+      100% { opacity:1; transform:translateX(0); }
     }
-    .wz-stepper-item.done:not(:last-child)::after { background: #75138c; }
-    .wz-stepper-circle {
-      width: 32px; height: 32px; border-radius: 50%;
-      border: 2px solid #d9dde8; background: #fff;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 12px; font-weight: 700; color: #bbb;
-      position: relative; z-index: 1; transition: all 0.2s;
-    }
-    .wz-stepper-item.active .wz-stepper-circle { background: #75138c; border-color: #75138c; color: #fff; }
-    .wz-stepper-item.done .wz-stepper-circle { background: #75138c; border-color: #75138c; font-size: 0; }
-    .wz-stepper-item.done .wz-stepper-circle::before {
-      content: ''; display: block;
-      width: 7px; height: 11px;
-      border: 2px solid #fff; border-top: none; border-left: none;
-      transform: rotate(45deg) translate(-1px, -2px);
-    }
-    .wz-stepper-label { font-size: 11px; font-weight: 600; color: #bbb; margin-top: 8px; text-align: center; }
-    .wz-stepper-item.active .wz-stepper-label { color: #75138c; }
-    .wz-stepper-item.done .wz-stepper-label { color: #75138c; }
+    .wz-exit-left   { animation: wzExitLeft  0.18s ease-in  forwards; }
+    .wz-exit-right  { animation: wzExitRight 0.18s ease-in  forwards; }
+    .wz-enter-right { animation: wzEnterRight 0.48s cubic-bezier(0.25,1,0.5,1) forwards; }
+    .wz-enter-left  { animation: wzEnterLeft  0.48s cubic-bezier(0.25,1,0.5,1) forwards; }
     .wz-card { background: #fff; border-radius: 10px; padding: 28px; margin-bottom: 20px; }
     .wz-card-title { font-size: 16px; font-weight: 700; color: #1a1a2e; margin-bottom: 4px; }
     .wz-card-desc { font-size: 13px; color: #888; margin-bottom: 20px; line-height: 1.5; }
@@ -1215,35 +1209,29 @@
         <span class="back-title-text">New Test</span>
       </div>
 
-      <!-- Stepper -->
-      <div class="wz-stepper">
-        <div class="wz-stepper-item active" id="wz-step-tab-1" onclick="wzGoToStep(1)">
-          <div class="wz-stepper-circle">1</div>
-          <div class="wz-stepper-label">Name Test</div>
-        </div>
-        <div class="wz-stepper-item" id="wz-step-tab-2" onclick="wzGoToStep(2)">
-          <div class="wz-stepper-circle">2</div>
-          <div class="wz-stepper-label">Add Sections</div>
-        </div>
-        <div class="wz-stepper-item" id="wz-step-tab-3" onclick="wzGoToStep(3)">
-          <div class="wz-stepper-circle">3</div>
-          <div class="wz-stepper-label">Pick Items</div>
-        </div>
-        <div class="wz-stepper-item" id="wz-step-tab-4" onclick="wzGoToStep(4)">
-          <div class="wz-stepper-circle">4</div>
-          <div class="wz-stepper-label">Review</div>
-        </div>
-        <div class="wz-stepper-item" id="wz-step-tab-5" onclick="wzGoToStep(5)">
-          <div class="wz-stepper-circle">5</div>
-          <div class="wz-stepper-label">Schedule</div>
-        </div>
-      </div>
+      <!-- Hidden tab elements so JS doesn't crash -->
+      <span id="wz-step-tab-1" style="display:none"></span>
+      <span id="wz-step-tab-2" style="display:none"></span>
+      <span id="wz-step-tab-3" style="display:none"></span>
+      <span id="wz-step-tab-4" style="display:none"></span>
 
       <!-- STEP 1: Name Test -->
       <div id="wz-step-1">
         <div class="wz-card">
-          <div class="wz-card-title">Name your test</div>
-          <div class="wz-card-desc">Give your test a meaningful name and select the course it belongs to.</div>
+          <div class="wz-step-header">
+            <div class="wz-step-ring">
+              <svg width="44" height="44" viewBox="0 0 44 44">
+                <circle cx="22" cy="22" r="17" fill="none" stroke="#ede8f5" stroke-width="4"/>
+                <circle cx="22" cy="22" r="17" fill="none" stroke="#75138c" stroke-width="4"
+                  stroke-dasharray="26.7 80" stroke-dashoffset="0"
+                  transform="rotate(-90 22 22)" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div>
+              <div class="wz-card-title" style="margin-bottom:2px">Name your test</div>
+              <div class="wz-card-desc" style="margin-bottom:0">Give your test a meaningful name and select the course it belongs to.</div>
+            </div>
+          </div>
           <div class="field-group" style="margin-bottom:16px">
             <div class="field-label">Name <span class="req">*</span></div>
             <input class="field-input" id="wz-test-name" type="text" placeholder="e.g. Grade 5 Mathematics — Term 2 Assessment" maxlength="80">
@@ -1280,8 +1268,20 @@
       <!-- STEP 2: Add Sections -->
       <div id="wz-step-2" class="wz-hidden">
         <div class="wz-card">
-          <div class="wz-card-title">Add sections</div>
-          <div class="wz-card-desc">Organise your test into sections by topic or part, then drag to reorder them.</div>
+          <div class="wz-step-header">
+            <div class="wz-step-ring">
+              <svg width="44" height="44" viewBox="0 0 44 44">
+                <circle cx="22" cy="22" r="17" fill="none" stroke="#ede8f5" stroke-width="4"/>
+                <circle cx="22" cy="22" r="17" fill="none" stroke="#75138c" stroke-width="4"
+                  stroke-dasharray="53.4 53.4" stroke-dashoffset="0"
+                  transform="rotate(-90 22 22)" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div>
+              <div class="wz-card-title" style="margin-bottom:2px">Add sections</div>
+              <div class="wz-card-desc" style="margin-bottom:0">Organise your test into sections by topic or part, then drag to reorder them.</div>
+            </div>
+          </div>
           <div class="wz-sections-list" id="wz-sections-list"></div>
           <div class="wz-add-section-row">
             <input class="field-input" id="wz-new-section-input" type="text" placeholder="Section name (e.g. Algebra)" maxlength="50" onkeydown="if(event.key==='Enter') wzAddSection()">
@@ -1299,8 +1299,20 @@
       <!-- STEP 3: Pick Items -->
       <div id="wz-step-3" class="wz-hidden">
         <div class="wz-card">
-          <div class="wz-card-title">Pick items</div>
-          <div class="wz-card-desc">Select a section tab, then browse and filter items to add to it. Each item can only be added to one section.</div>
+          <div class="wz-step-header">
+            <div class="wz-step-ring">
+              <svg width="44" height="44" viewBox="0 0 44 44">
+                <circle cx="22" cy="22" r="17" fill="none" stroke="#ede8f5" stroke-width="4"/>
+                <circle cx="22" cy="22" r="17" fill="none" stroke="#75138c" stroke-width="4"
+                  stroke-dasharray="80 26.7" stroke-dashoffset="0"
+                  transform="rotate(-90 22 22)" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div>
+              <div class="wz-card-title" style="margin-bottom:2px">Pick items</div>
+              <div class="wz-card-desc" style="margin-bottom:0">Select a section tab, then browse and filter items to add to it. Each item can only be added to one section.</div>
+            </div>
+          </div>
           <div class="wz-section-tabs" id="wz-section-tabs"></div>
           <div class="wz-q-layout">
             <!-- Bank -->
@@ -1346,154 +1358,25 @@
       <!-- STEP 4: Review -->
       <div id="wz-step-4" class="wz-hidden">
         <div class="wz-card">
-          <div class="wz-card-title">Review your test</div>
-          <div class="wz-card-desc">Check your sections and selected items before scheduling.</div>
+          <div class="wz-step-header">
+            <div class="wz-step-ring">
+              <svg width="44" height="44" viewBox="0 0 44 44">
+                <circle cx="22" cy="22" r="17" fill="none" stroke="#ede8f5" stroke-width="4"/>
+                <circle cx="22" cy="22" r="17" fill="none" stroke="#75138c" stroke-width="4"
+                  stroke-dasharray="106.8 0" stroke-dashoffset="0"
+                  transform="rotate(-90 22 22)" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div>
+              <div class="wz-card-title" style="margin-bottom:2px">Review your test</div>
+              <div class="wz-card-desc" style="margin-bottom:0">Check your sections and selected items before scheduling.</div>
+            </div>
+          </div>
           <div id="wz-review-sections"></div>
         </div>
         <div class="wz-nav">
           <div class="wz-nav-right">
             <button class="btn-ghost" onclick="wzGoToStep(3)">← Back</button>
-            <button class="btn-primary" onclick="wzGoToStep(5)">Next: Schedule →</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- STEP 5: Schedule -->
-      <div id="wz-step-5" class="wz-hidden">
-        <div class="wz-schedule-layout">
-          <!-- Main column -->
-          <div>
-
-            <!-- Schedule settings: single card -->
-            <div class="wz-card">
-
-            <!-- When to Deploy -->
-            <div>
-              <div class="wz-schedule-section-header">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#75138c" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                When to Deploy
-              </div>
-              <div class="wz-radio-group">
-                <label class="wz-radio-card wz-radio-selected" id="wz-deploy-now-card">
-                  <input type="radio" name="wz-deploy" value="now" checked onchange="wzUpdateDeployRadio()">
-                  <div class="wz-radio-inner">
-                    <div class="wz-radio-dot"></div>
-                    <div>
-                      <div class="wz-radio-title">Deploy Now</div>
-                      <div class="wz-radio-desc">Students can begin immediately after creation</div>
-                    </div>
-                  </div>
-                </label>
-                <label class="wz-radio-card" id="wz-deploy-later-card">
-                  <input type="radio" name="wz-deploy" value="later" onchange="wzUpdateDeployRadio()">
-                  <div class="wz-radio-inner">
-                    <div class="wz-radio-dot"></div>
-                    <div>
-                      <div class="wz-radio-title">Schedule For Later</div>
-                      <div class="wz-radio-desc">Set a specific date and time for the assessment to open</div>
-                    </div>
-                  </div>
-                </label>
-              </div>
-              <div id="wz-schedule-datetime" style="display:none;margin-top:14px">
-                <div class="grid-2">
-                  <div class="field-group">
-                    <div class="field-label">Date</div>
-                    <input class="field-input" type="date" id="wz-schedule-date">
-                  </div>
-                  <div class="field-group">
-                    <div class="field-label">Time</div>
-                    <input class="field-input" type="time" id="wz-schedule-time">
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Assign To -->
-            <div style="border-top:1px solid #f0f0f0;margin-top:24px;padding-top:24px">
-              <div class="wz-schedule-section-header">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#75138c" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-                Assign To
-              </div>
-              <div class="wz-radio-group">
-                <label class="wz-radio-card wz-radio-selected" id="wz-assign-all-card">
-                  <input type="radio" name="wz-assign" value="all" checked onchange="wzUpdateAssignRadio()">
-                  <div class="wz-radio-inner">
-                    <div class="wz-radio-dot"></div>
-                    <div>
-                      <div class="wz-radio-title">All Students</div>
-                      <div class="wz-radio-desc">Assign to all 24 students in the class</div>
-                    </div>
-                  </div>
-                </label>
-                <label class="wz-radio-card" id="wz-assign-specific-card">
-                  <input type="radio" name="wz-assign" value="specific" onchange="wzUpdateAssignRadio()">
-                  <div class="wz-radio-inner">
-                    <div class="wz-radio-dot"></div>
-                    <div>
-                      <div class="wz-radio-title">Specific Students</div>
-                      <div class="wz-radio-desc">Select individual students to assign this assessment</div>
-                    </div>
-                  </div>
-                </label>
-              </div>
-              <div id="wz-students-panel" style="display:none;margin-top:14px">
-                <div class="wz-search-bar" style="margin-bottom:8px">
-                  <svg class="wz-search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                  <input type="text" id="wz-student-search" placeholder="Search students…" oninput="wzFilterStudents()">
-                </div>
-                <div class="wz-student-list" id="wz-student-list"></div>
-                <div class="wz-student-count" id="wz-student-count">0 of 24 students selected</div>
-              </div>
-            </div>
-
-            <!-- Estimated Duration -->
-            <div style="border-top:1px solid #f0f0f0;margin-top:24px;padding-top:24px">
-              <div class="wz-schedule-section-header">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#75138c" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                Estimated Duration
-              </div>
-              <input type="range" class="wz-duration-slider" id="wz-duration-slider" min="0" max="5" step="1" value="3" oninput="wzUpdateDuration(this.value)">
-              <div class="wz-duration-presets">
-                <span class="wz-duration-preset" onclick="wzSetDuration(0)">15m</span>
-                <span class="wz-duration-preset" onclick="wzSetDuration(1)">30m</span>
-                <span class="wz-duration-preset" onclick="wzSetDuration(2)">45m</span>
-                <span class="wz-duration-preset wz-duration-active" onclick="wzSetDuration(3)">1h</span>
-                <span class="wz-duration-preset" onclick="wzSetDuration(4)">1.5h</span>
-                <span class="wz-duration-preset" onclick="wzSetDuration(5)">2h</span>
-              </div>
-            </div>
-
-            <!-- Special Instructions -->
-            <div style="border-top:1px solid #f0f0f0;margin-top:24px;padding-top:24px">
-              <div class="wz-schedule-section-header" style="justify-content:space-between">
-                <span style="display:flex;align-items:center;gap:8px">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#75138c" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-                  Special Instructions
-                </span>
-                <span style="font-size:12px;color:#999;font-weight:400">Optional</span>
-              </div>
-              <textarea class="field-input" id="wz-instructions" rows="4" placeholder="e.g. Students may use a calculator. No collaboration permitted. Read all items carefully before answering." style="resize:vertical;margin-top:4px"></textarea>
-            </div>
-
-            </div><!-- /single schedule card -->
-          </div>
-
-          <!-- Summary sidebar -->
-          <div class="wz-schedule-sidebar">
-            <div class="wz-sidebar-title">Summary</div>
-            <div class="wz-sidebar-row"><div class="wz-sidebar-label">ASSESSMENT</div><div class="wz-sidebar-value" id="wz-sum-name">—</div></div>
-            <div class="wz-sidebar-row"><div class="wz-sidebar-label">CLASS</div><div class="wz-sidebar-value" id="wz-sum-course">—</div></div>
-            <div class="wz-sidebar-row"><div class="wz-sidebar-label">TYPE</div><div class="wz-sidebar-value" id="wz-sum-type">Formative</div></div>
-            <div class="wz-sidebar-row"><div class="wz-sidebar-label">OPENS</div><div class="wz-sidebar-value" id="wz-sum-opens">Immediately upon creation</div></div>
-            <div class="wz-sidebar-row"><div class="wz-sidebar-label">ASSIGNED TO</div><div class="wz-sidebar-value" id="wz-sum-assigned">All students (24)</div></div>
-            <div class="wz-sidebar-row" style="border:none"><div class="wz-sidebar-label">DURATION</div><div class="wz-sidebar-value" id="wz-sum-duration">1h</div></div>
-          </div>
-        </div>
-
-        <div class="wz-nav">
-          <div class="wz-nav-right">
-            <button class="btn-ghost" onclick="wzGoToStep(4)">← Back</button>
             <button class="btn-ghost" id="wz-btn-draft">Save as Draft</button>
             <button class="btn-primary" id="wz-btn-save">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
@@ -1501,7 +1384,6 @@
             </button>
           </div>
         </div>
-      </div>
 
       <div class="create-layout" style="display:none">
         <!-- Form card -->
@@ -1990,7 +1872,7 @@
     document.getElementById('wz-search-input').value = '';
     document.querySelectorAll('.wz-chip').forEach(c => c.classList.remove('active'));
     wzRenderSections();
-    [1,2,3,4,5].forEach(i => {
+    [1,2,3,4].forEach(i => {
       document.getElementById('wz-step-'+i).classList.toggle('wz-hidden', i !== 1);
       const tab = document.getElementById('wz-step-tab-'+i);
       tab.classList.remove('active','done');
@@ -1999,6 +1881,7 @@
   }
 
   function wzGoToStep(n) {
+    if (n === wz.step) return;
     // Validate forward navigation; allow backward freely
     if (n > wz.step) {
       if (n > 1) {
@@ -2009,23 +1892,41 @@
       }
       if (n > 2 && wz.sections.length === 0) { wzShowToast('Add at least one section first'); return; }
     } else {
-      // Going backward: save current step data
       if (wz.step === 1) {
         wz.testName = document.getElementById('wz-test-name').value.trim();
         wz.course = document.getElementById('wz-test-course').value;
       }
     }
+    const prevStep = wz.step;
+    const isForward = n > prevStep;
     wz.step = n;
-    [1,2,3,4,5].forEach(i => {
-      document.getElementById('wz-step-'+i).classList.toggle('wz-hidden', i !== n);
+
+    // Update tab states
+    [1,2,3,4].forEach(i => {
       const tab = document.getElementById('wz-step-tab-'+i);
       tab.classList.remove('active','done');
       if (i === n) tab.classList.add('active');
       else if (i < n) tab.classList.add('done');
     });
-    if (n === 3) wzRenderStep3();
-    if (n === 4) wzRenderReviewItems();
-    if (n === 5) wzRenderScheduleSummary();
+
+    const prevEl = document.getElementById('wz-step-' + prevStep);
+    const nextEl = document.getElementById('wz-step-' + n);
+
+    // Animate exit
+    prevEl.classList.add(isForward ? 'wz-exit-left' : 'wz-exit-right');
+
+    setTimeout(() => {
+      prevEl.classList.remove('wz-exit-left', 'wz-exit-right');
+      prevEl.classList.add('wz-hidden');
+
+      nextEl.classList.remove('wz-hidden');
+      nextEl.classList.add(isForward ? 'wz-enter-right' : 'wz-enter-left');
+
+      if (n === 3) wzRenderStep3();
+      if (n === 4) wzRenderReviewItems();
+
+      setTimeout(() => nextEl.classList.remove('wz-enter-right', 'wz-enter-left'), 500);
+    }, 180);
   }
 
   // ── Step 2: Sections with drag-and-drop ──
