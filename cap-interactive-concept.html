@@ -101,7 +101,7 @@
     .page-title { font-size: 22px; font-weight: 700; color: #1a1a2e; margin-bottom: 4px; }
     .page-subtitle { font-size: 13px; color: #888; margin-bottom: 24px; }
     .stats-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; margin-bottom: 28px; }
-    .stat-card { background: #fff; border: 1px solid #e9e9e9; border-radius: 10px; padding: 20px; }
+    .stat-card { background: #fff; border-radius: 10px; padding: 20px; }
     .stat-card-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 14px; }
     .stat-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
     .stat-icon.blue   { background: #eef2ff; color: #4a6cf7; }
@@ -250,7 +250,7 @@
     /* Pagination */
     .pagination {
       display: flex; align-items: center; justify-content: flex-end;
-      gap: 4px; padding: 14px 20px; border-top: 1px solid #f0f2f5;
+      gap: 4px; padding: 14px 20px;
     }
     .page-btn {
       min-width: 32px; height: 32px; padding: 0 8px;
@@ -340,7 +340,7 @@
     .btn-danger:hover { background: #fff0ef; }
 
     /* Card */
-    .card { background: #fff; border: 1px solid #e9e9e9; border-radius: 10px; overflow: hidden; }
+    .card { background: #fff; border-radius: 10px; overflow: hidden; }
 
     /* Panel */
     .panel { background: #fff; border: 1px solid #e9e9e9; border-radius: 10px; overflow: hidden; margin-bottom: 20px; }
@@ -391,11 +391,31 @@
 
     .tm-header {
       display: flex; align-items: center; justify-content: space-between;
-      margin-bottom: 22px;
+      margin-bottom: 20px;
     }
     .tm-title-group { display: flex; align-items: center; gap: 10px; }
     .tm-title { font-size: 20px; font-weight: 700; color: #1a1a2e; }
     .tm-count { background: #eef0f8; color: #2a3766; border-radius: 9999px; padding: 2px 10px; font-size: 12px; font-weight: 600; }
+
+    .tm-subtitle {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 13px; color: #666;
+      margin-bottom: 22px;
+    }
+    .tm-subtitle-sep { color: #ccc; }
+    .tm-status-badge {
+      display: inline-flex; align-items: center;
+      background: #e6f9f0; color: #1a8c54;
+      border-radius: 9999px; padding: 2px 10px;
+      font-size: 11px; font-weight: 700; letter-spacing: 0.03em;
+    }
+    .tm-status-badge::before {
+      content: ''; width: 6px; height: 6px;
+      border-radius: 50%; background: #2dbe6c;
+      margin-right: 5px;
+    }
+
+    .tm-stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 22px; }
 
     table { width: 100%; border-collapse: collapse; font-size: 13px; }
     thead tr { border-bottom: 1px solid #e9e9e9; }
@@ -403,10 +423,9 @@
       text-align: left; padding: 11px 16px;
       font-size: 11px; font-weight: 700; color: #888;
       text-transform: uppercase; letter-spacing: 0.04em;
-      white-space: nowrap; background: #fafbfd;
+      white-space: nowrap; background: #fff;
     }
     tbody tr { border-bottom: 1px solid #f0f2f5; transition: background 0.12s; cursor: pointer; }
-    tbody tr:last-child { border-bottom: none; }
     tbody tr:hover { background: #f0f3fc; }
 
     td { padding: 15px 16px; vertical-align: middle; }
@@ -549,15 +568,38 @@
 
     /* ─── Test Builder Wizard ─── */
     .wz-hidden { display: none !important; }
-    .wz-progress { height: 3px; background: #e9e9e9; border-radius: 2px; margin-bottom: 24px; overflow: hidden; }
-    .wz-progress-fill { height: 100%; background: linear-gradient(90deg, #2a3766, #75138c); border-radius: 2px; transition: width 0.4s ease; }
-    .wz-steps { display: flex; background: #fff; border: 1px solid #e9e9e9; border-radius: 8px; padding: 4px; margin-bottom: 24px; gap: 2px; }
-    .wz-step { flex: 1; display: flex; align-items: center; justify-content: center; gap: 7px; padding: 9px 12px; border-radius: 6px; font-size: 13px; font-weight: 600; color: #999; cursor: default; transition: all 0.2s; white-space: nowrap; }
-    .wz-step.active { background: #2a3766; color: #fff; }
-    .wz-step.done { color: #2dbe6c; }
-    .wz-step-num { width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid currentColor; display: flex; align-items: center; justify-content: center; font-size: 11px; flex-shrink: 0; }
-    .wz-step.active .wz-step-num { background: rgba(255,255,255,0.2); border-color: transparent; }
-    .wz-card { background: #fff; border: 1px solid #e9e9e9; border-radius: 10px; padding: 28px; margin-bottom: 20px; }
+
+    /* Unified stepper */
+    .wz-stepper { display: flex; margin-bottom: 32px; }
+    .wz-stepper-item {
+      flex: 1; display: flex; flex-direction: column; align-items: center;
+      position: relative; cursor: default;
+    }
+    .wz-stepper-item:not(:last-child)::after {
+      content: ''; position: absolute;
+      top: 15px; left: 50%; width: 100%; height: 2px;
+      background: #e9e9e9; z-index: 0; transition: background 0.3s;
+    }
+    .wz-stepper-item.done:not(:last-child)::after { background: #75138c; }
+    .wz-stepper-circle {
+      width: 32px; height: 32px; border-radius: 50%;
+      border: 2px solid #d9dde8; background: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700; color: #bbb;
+      position: relative; z-index: 1; transition: all 0.2s;
+    }
+    .wz-stepper-item.active .wz-stepper-circle { background: #75138c; border-color: #75138c; color: #fff; }
+    .wz-stepper-item.done .wz-stepper-circle { background: #75138c; border-color: #75138c; font-size: 0; }
+    .wz-stepper-item.done .wz-stepper-circle::before {
+      content: ''; display: block;
+      width: 7px; height: 11px;
+      border: 2px solid #fff; border-top: none; border-left: none;
+      transform: rotate(45deg) translate(-1px, -2px);
+    }
+    .wz-stepper-label { font-size: 11px; font-weight: 600; color: #bbb; margin-top: 8px; text-align: center; }
+    .wz-stepper-item.active .wz-stepper-label { color: #75138c; }
+    .wz-stepper-item.done .wz-stepper-label { color: #75138c; }
+    .wz-card { background: #fff; border-radius: 10px; padding: 28px; margin-bottom: 20px; }
     .wz-card-title { font-size: 16px; font-weight: 700; color: #1a1a2e; margin-bottom: 4px; }
     .wz-card-desc { font-size: 13px; color: #888; margin-bottom: 20px; line-height: 1.5; }
     .wz-name-input { font-size: 18px !important; padding: 14px 18px !important; }
@@ -573,11 +615,11 @@
     .wz-section-tab { display: flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer; border: 1.5px solid #e9e9e9; background: #f7f8fa; color: #555; transition: all 0.15s; }
     .wz-section-tab.active { border-color: #2a3766; color: #2a3766; background: #eef0f8; }
     .wz-tab-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
-    .wz-tab-count { background: #e9e9e9; border-radius: 10px; padding: 1px 6px; font-size: 11px; }
-    .wz-section-tab.active .wz-tab-count { background: #d0d5e8; }
+    .wz-tab-count { background: #e9e9e9; border-radius: 10px; padding: 1px 6px; font-size: 11px; color: #555; }
+    .wz-section-tab.active .wz-tab-count { background: #d0d5e8; color: #2a3766; }
     .wz-bank-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
     .wz-bank-title { font-size: 11px; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: 0.06em; }
-    .wz-badge { display: inline-flex; align-items: center; padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; background: #eef0f8; color: #2a3766; }
+    .wz-badge { display: inline-flex; align-items: center; font-size: 11px; font-weight: 600; color: #999; }
     .wz-search-bar { position: relative; margin-bottom: 10px; }
     .wz-search-bar input { width: 100%; padding: 8px 12px 8px 34px; border: 1.5px solid #dde1ed; border-radius: 6px; font-family: 'Open Sans', sans-serif; font-size: 13px; color: #1a1a2e; background: #f7f8fa; outline: none; transition: border-color 0.15s; }
     .wz-search-bar input:focus { border-color: #2a3766; background: #fff; }
@@ -591,9 +633,7 @@
     .wz-question-list::-webkit-scrollbar-thumb { background: #dde1ed; border-radius: 3px; }
     .wz-q-item { display: flex; align-items: flex-start; gap: 9px; padding: 9px 11px; background: #f7f8fa; border: 1.5px solid #e9e9e9; border-radius: 7px; cursor: pointer; transition: all 0.12s; }
     .wz-q-item:hover { border-color: #2a3766; background: #eef0f8; }
-    .wz-q-item.selected { border-color: #2dbe6c; background: #edfaf3; opacity: 0.7; pointer-events: none; }
     .wz-q-add-icon { font-size: 15px; color: #2a3766; flex-shrink: 0; margin-top: 2px; font-style: normal; font-weight: 700; }
-    .wz-q-item.selected .wz-q-add-icon { color: #2dbe6c; }
     .wz-q-text { flex: 1; font-size: 12px; line-height: 1.4; color: #1a1a2e; }
     .wz-q-meta { display: flex; gap: 4px; margin-top: 4px; flex-wrap: wrap; }
     .wz-q-tag { font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: 600; }
@@ -612,7 +652,7 @@
     .wz-sel-num { width: 20px; height: 20px; border-radius: 5px; background: #e9e9e9; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #555; flex-shrink: 0; margin-top: 1px; }
     .wz-sel-text { flex: 1; font-size: 12px; line-height: 1.4; color: #1a1a2e; }
     .wz-empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 32px 20px; text-align: center; color: #bbb; border: 2px dashed #e9e9e9; border-radius: 8px; min-height: 180px; }
-    .wz-empty-icon { font-size: 28px; margin-bottom: 8px; }
+    .wz-empty-icon { display: flex; align-items: center; justify-content: center; margin-bottom: 8px; }
     .wz-empty-text { font-size: 12px; line-height: 1.5; }
     .wz-summary-name { font-size: 22px; font-weight: 700; color: #1a1a2e; margin-bottom: 4px; }
     .wz-summary-meta { font-size: 13px; color: #888; margin-bottom: 24px; }
@@ -624,15 +664,16 @@
     .wz-summary-q { display: flex; gap: 9px; padding: 6px 0; border-bottom: 1px solid #f4f4f4; font-size: 12px; color: #555; }
     .wz-summary-q:last-child { border-bottom: none; }
     .wz-summary-q-num { color: #bbb; min-width: 18px; }
-    .wz-nav { display: flex; justify-content: space-between; align-items: center; padding-top: 16px; border-top: 1px solid #f0f0f0; }
+    .wz-nav { display: flex; justify-content: flex-end; align-items: center; padding-top: 16px; border-top: 1px solid #f0f0f0; }
     .wz-nav-right { display: flex; gap: 8px; }
+    .wz-nav .btn-ghost { font-size: 13px; padding: 9px 20px; }
     .wz-toast { position: fixed; bottom: 24px; right: 24px; background: #fff; border: 1px solid #e9e9e9; color: #1a1a2e; padding: 12px 18px; border-radius: 8px; font-family: 'Open Sans', sans-serif; font-size: 13px; font-weight: 600; box-shadow: 0 4px 20px rgba(0,0,0,0.12); transform: translateY(70px); opacity: 0; transition: all 0.3s ease; z-index: 1000; }
     .wz-toast.show { transform: translateY(0); opacity: 1; }
     /* Drag handle */
     .wz-drag-handle { color: #ccc; cursor: grab; font-size: 16px; padding: 0 2px; line-height: 1; flex-shrink: 0; }
     .wz-drag-handle:active { cursor: grabbing; }
     .wz-section-item { transition: transform 0.18s ease; }
-    .wz-section-item.wz-dragging { opacity: 0.25; cursor: grabbing; }
+    .wz-section-item.wz-dragging { opacity: 0.25; cursor: grabbing; border-radius: 10px; }
     /* Student picker */
     .wz-student-list { display: flex; flex-direction: column; gap: 4px; max-height: 220px; overflow-y: auto; padding-right: 2px; }
     .wz-student-list::-webkit-scrollbar { width: 3px; }
@@ -672,7 +713,7 @@
     .wz-duration-preset:hover { border-color: #bbb; }
     .wz-duration-active { border-color: #75138c !important; background: #75138c !important; color: #fff !important; }
     /* Schedule sidebar */
-    .wz-schedule-sidebar { background: #fff; border: 1px solid #e9e9e9; border-radius: 10px; padding: 24px; align-self: start; }
+    .wz-schedule-sidebar { background: #fff; border-radius: 10px; padding: 24px; align-self: start; }
     .wz-sidebar-title { font-size: 15px; font-weight: 700; color: #1a1a2e; margin-bottom: 20px; }
     .wz-sidebar-row { padding: 12px 0; border-bottom: 1px solid #f0f0f0; }
     .wz-sidebar-label { font-size: 11px; font-weight: 700; color: #999; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 4px; }
@@ -702,7 +743,7 @@
     </div>
     <div class="nav-item" data-page="test-management">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
-      Test Management
+      Tests
     </div>
     <div class="nav-item" data-page="">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
@@ -788,13 +829,39 @@
     <div class="tm-page-inner">
       <div class="tm-header">
         <div class="tm-title-group">
-          <span class="tm-title">Assessment Tests</span>
-          <span class="tm-count">15 tests</span>
+          <span class="tm-title">Tests</span>
         </div>
         <button class="btn-primary" id="btn-create-test">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
           New Test
         </button>
+      </div>
+
+      <div class="tm-stats-row">
+        <div class="stat-card">
+          <div class="stat-card-top">
+            <div class="stat-icon purple"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div>
+          </div>
+          <div class="stat-label">Course</div><div class="stat-value" style="font-size:13px;font-weight:600">Grade 4 Mathematics</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-top">
+            <div class="stat-icon orange"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+          </div>
+          <div class="stat-label">Assessment Duration</div><div class="stat-value" style="font-size:13px;font-weight:600">16 Jan – 18 Jul 2026</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-top">
+            <div class="stat-icon blue"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+          </div>
+          <div class="stat-label">Students</div><div class="stat-value">156</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-top">
+            <div class="stat-icon green"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
+          </div>
+          <div class="stat-label">Tests Completed</div><div class="stat-value">9</div>
+        </div>
       </div>
 
       <div class="card">
@@ -804,27 +871,21 @@
             <input class="search-input" id="table-search" type="text" placeholder="Search tests…">
           </div>
         </div>
-        <table>
+        <table style="table-layout:fixed">
+          <colgroup>
+            <col style="width:34%">
+            <col style="width:13%">
+            <col style="width:9%">
+            <col style="width:12%">
+            <col style="width:18%">
+            <col style="width:14%">
+          </colgroup>
           <thead>
             <tr>
               <th><div class="th-cell"><span class="th-inner" data-col="0">Name<svg class="sort-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 3 18 9"/><polyline points="6 15 12 21 18 15"/></svg></span></div></th>
-              <th>
-                <div class="th-cell">
-                  <span class="th-inner" data-col="2">Type<svg class="sort-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 3 18 9"/><polyline points="6 15 12 21 18 15"/></svg></span>
-                  <button class="filter-btn" id="type-filter-btn" title="Filter by Type"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg></button>
-                </div>
-                <div class="filter-dropdown" id="type-filter-dropdown">
-                  <div class="filter-header">Filter by Type <span class="filter-select-all" id="type-select-all">Select all</span></div>
-                  <label class="filter-option"><input type="checkbox" value="Formative"> Formative</label>
-                  <label class="filter-option"><input type="checkbox" value="Summative"> Summative</label>
-                  <label class="filter-option"><input type="checkbox" value="Interim"> Interim</label>
-                  <div class="filter-divider"></div>
-                  <div class="filter-footer">
-                    <span class="filter-clear" id="type-filter-clear">Clear</span>
-                  </div>
-                </div>
-              </th>
-              <th><div class="th-cell"><span class="th-inner" data-col="3">Structure<svg class="sort-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 3 18 9"/><polyline points="6 15 12 21 18 15"/></svg></span></div></th>
+              <th><div class="th-cell"><span>Type</span></div></th>
+              <th><div class="th-cell"><span class="th-inner" data-col="2">Items<svg class="sort-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 3 18 9"/><polyline points="6 15 12 21 18 15"/></svg></span></div></th>
+              <th><div class="th-cell"><span class="th-inner" data-col="3">Total Points<svg class="sort-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 3 18 9"/><polyline points="6 15 12 21 18 15"/></svg></span></div></th>
               <th><div class="th-cell"><span class="th-inner" data-col="4">Date of Test<svg class="sort-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 3 18 9"/><polyline points="6 15 12 21 18 15"/></svg></span></div></th>
               <th>
                 <div class="th-cell">
@@ -848,107 +909,177 @@
           <tbody id="test-table-body">
             <tr class="test-row" data-test="1">
               <td><div class="td-title">Place Value and Number Sense</div></td>
-              <td><span class="type-badge summative">Summative</span></td>
-              <td><span class="td-structure">2 parts · 4 sections · 8 items</span></td>
-              <td><span class="td-date">15 Mar 2025</span></td>
+              <td><span class="type-badge formative">Formative</span></td>
+              <td>8</td><td>80</td>
+              <td><span class="td-date">28 Jan 2026</span></td>
               <td><span class="status-badge completed">Completed</span></td>
             </tr>
             <tr class="test-row" data-test="2">
               <td><div class="td-title">Addition and Subtraction to 10,000</div></td>
               <td><span class="type-badge formative">Formative</span></td>
-              <td><span class="td-structure">1 part · 2 sections · 5 items</span></td>
-              <td><span class="td-date">10 Feb 2025</span></td>
+              <td>5</td><td>50</td>
+              <td><span class="td-date">04 Feb 2026</span></td>
               <td><span class="status-badge completed">Completed</span></td>
             </tr>
             <tr class="test-row" data-test="3">
               <td><div class="td-title">Multiplication Concepts and Strategies</div></td>
-              <td><span class="type-badge summative">Summative</span></td>
-              <td><span class="td-structure">2 parts · 3 sections · 6 items</span></td>
-              <td><span class="td-date">14 Oct 2025</span></td>
+              <td><span class="type-badge formative">Formative</span></td>
+              <td>6</td><td>60</td>
+              <td><span class="td-date">11 Feb 2026</span></td>
               <td><span class="status-badge completed">Completed</span></td>
             </tr>
             <tr class="test-row" data-test="4">
               <td><div class="td-title">Division Facts and Relationships</div></td>
               <td><span class="type-badge formative">Formative</span></td>
-              <td><span class="td-structure">1 part · 1 section · 3 items</span></td>
-              <td><span class="td-date">01 Dec 2025</span></td>
-              <td><span class="status-badge draft">Draft</span></td>
+              <td>3</td><td>30</td>
+              <td><span class="td-date">18 Feb 2026</span></td>
+              <td><span class="status-badge completed">Completed</span></td>
             </tr>
             <tr class="test-row" data-test="5">
               <td><div class="td-title">Multi-Digit Multiplication</div></td>
-              <td><span class="type-badge interim">Interim</span></td>
-              <td><span class="td-structure">1 part · 2 sections · 4 items</span></td>
-              <td><span class="td-date">20 Nov 2025</span></td>
-              <td><span class="status-badge scheduled">Scheduled</span></td>
+              <td><span class="type-badge formative">Formative</span></td>
+              <td>4</td><td>40</td>
+              <td><span class="td-date">25 Feb 2026</span></td>
+              <td><span class="status-badge completed">Completed</span></td>
             </tr>
             <tr class="test-row" data-test="6">
               <td><div class="td-title">Fractions – Equivalence and Ordering</div></td>
-              <td><span class="type-badge summative">Summative</span></td>
-              <td><span class="td-structure">2 parts · 3 sections · 5 items</span></td>
-              <td><span class="td-date">20 Nov 2025</span></td>
-              <td><span class="status-badge scheduled">Scheduled</span></td>
+              <td><span class="type-badge formative">Formative</span></td>
+              <td>5</td><td>50</td>
+              <td><span class="td-date">04 Mar 2026</span></td>
+              <td><span class="status-badge completed">Completed</span></td>
             </tr>
             <tr class="test-row" data-test="7">
               <td><div class="td-title">Adding and Subtracting Fractions</div></td>
               <td><span class="type-badge formative">Formative</span></td>
-              <td><span class="td-structure">1 part · 1 section · 4 items</span></td>
-              <td><span class="td-date">05 Sep 2025</span></td>
+              <td>4</td><td>40</td>
+              <td><span class="td-date">11 Mar 2026</span></td>
               <td><span class="status-badge completed">Completed</span></td>
             </tr>
             <tr class="test-row" data-test="8">
               <td><div class="td-title">Decimals – Tenths and Hundredths</div></td>
-              <td><span class="type-badge interim">Interim</span></td>
-              <td><span class="td-structure">1 part · 2 sections · 5 items</span></td>
-              <td><span class="td-date">22 Aug 2025</span></td>
+              <td><span class="type-badge formative">Formative</span></td>
+              <td>5</td><td>50</td>
+              <td><span class="td-date">18 Mar 2026</span></td>
               <td><span class="status-badge completed">Completed</span></td>
             </tr>
             <tr class="test-row" data-test="9">
               <td><div class="td-title">Measurement – Length, Mass and Capacity</div></td>
               <td><span class="type-badge formative">Formative</span></td>
-              <td><span class="td-structure">1 part · 1 section · 3 items</span></td>
-              <td><span class="td-date">15 Jan 2026</span></td>
-              <td><span class="status-badge draft">Draft</span></td>
+              <td>3</td><td>30</td>
+              <td><span class="td-date">25 Mar 2026</span></td>
+              <td><span class="status-badge completed">Completed</span></td>
             </tr>
             <tr class="test-row" data-test="10">
               <td><div class="td-title">Area and Perimeter</div></td>
-              <td><span class="type-badge summative">Summative</span></td>
-              <td><span class="td-structure">1 part · 2 sections · 4 items</span></td>
-              <td><span class="td-date">30 Nov 2025</span></td>
-              <td><span class="status-badge cancelled">Cancelled</span></td>
+              <td><span class="type-badge formative">Formative</span></td>
+              <td>4</td><td>40</td>
+              <td><span class="td-date">01 Apr 2026</span></td>
+              <td><span class="status-badge completed">Completed</span></td>
             </tr>
             <tr class="test-row" data-test="11">
               <td><div class="td-title">Time – Elapsed Time and Schedules</div></td>
               <td><span class="type-badge formative">Formative</span></td>
-              <td><span class="td-structure">2 parts · 2 sections · 5 items</span></td>
-              <td><span class="td-date">28 Feb 2026</span></td>
-              <td><span class="status-badge draft">Draft</span></td>
+              <td>5</td><td>50</td>
+              <td><span class="td-date">08 Apr 2026</span></td>
+              <td><span class="status-badge completed">Completed</span></td>
             </tr>
             <tr class="test-row" data-test="12">
               <td><div class="td-title">Geometry – Angles and Lines</div></td>
-              <td><span class="type-badge summative">Summative</span></td>
-              <td><span class="td-structure">3 parts · 5 sections · 10 items</span></td>
-              <td><span class="td-date">12 Dec 2025</span></td>
+              <td><span class="type-badge formative">Formative</span></td>
+              <td>6</td><td>60</td>
+              <td><span class="td-date">15 Apr 2026</span></td>
               <td><span class="status-badge completed">Completed</span></td>
             </tr>
             <tr class="test-row" data-test="13">
               <td><div class="td-title">2D Shapes and Symmetry</div></td>
-              <td><span class="type-badge summative">Summative</span></td>
-              <td><span class="td-structure">2 parts · 3 sections · 7 items</span></td>
-              <td><span class="td-date">15 Mar 2026</span></td>
-              <td><span class="status-badge scheduled">Scheduled</span></td>
+              <td><span class="type-badge formative">Formative</span></td>
+              <td>5</td><td>50</td>
+              <td><span class="td-date">22 Apr 2026</span></td>
+              <td><span class="status-badge completed">Completed</span></td>
             </tr>
             <tr class="test-row" data-test="14">
               <td><div class="td-title">Data – Tables, Bar Graphs and Line Plots</div></td>
-              <td><span class="type-badge interim">Interim</span></td>
-              <td><span class="td-structure">1 part · 2 sections · 4 items</span></td>
-              <td><span class="td-date">01 Apr 2026</span></td>
+              <td><span class="type-badge formative">Formative</span></td>
+              <td>4</td><td>40</td>
+              <td><span class="td-date">29 Apr 2026</span></td>
               <td><span class="status-badge scheduled">Scheduled</span></td>
             </tr>
             <tr class="test-row" data-test="15">
               <td><div class="td-title">Number Patterns and Algebraic Thinking</div></td>
               <td><span class="type-badge formative">Formative</span></td>
-              <td><span class="td-structure">1 part · 1 section · 3 items</span></td>
-              <td><span class="td-date">10 Jan 2026</span></td>
+              <td>3</td><td>30</td>
+              <td><span class="td-date">06 May 2026</span></td>
+              <td><span class="status-badge scheduled">Scheduled</span></td>
+            </tr>
+            <tr class="test-row" data-test="16">
+              <td><div class="td-title">Rounding to Nearest 10 and 100</div></td>
+              <td><span class="type-badge formative">Formative</span></td>
+              <td>4</td><td>40</td>
+              <td><span class="td-date">13 May 2026</span></td>
+              <td><span class="status-badge scheduled">Scheduled</span></td>
+            </tr>
+            <tr class="test-row" data-test="17">
+              <td><div class="td-title">Factors and Multiples</div></td>
+              <td><span class="type-badge formative">Formative</span></td>
+              <td>5</td><td>50</td>
+              <td><span class="td-date">20 May 2026</span></td>
+              <td><span class="status-badge scheduled">Scheduled</span></td>
+            </tr>
+            <tr class="test-row" data-test="18">
+              <td><div class="td-title">Comparing and Ordering Fractions</div></td>
+              <td><span class="type-badge formative">Formative</span></td>
+              <td>4</td><td>40</td>
+              <td><span class="td-date">27 May 2026</span></td>
+              <td><span class="status-badge scheduled">Scheduled</span></td>
+            </tr>
+            <tr class="test-row" data-test="19">
+              <td><div class="td-title">Mixed Numbers and Improper Fractions</div></td>
+              <td><span class="type-badge formative">Formative</span></td>
+              <td>3</td><td>30</td>
+              <td><span class="td-date">03 Jun 2026</span></td>
+              <td><span class="status-badge scheduled">Scheduled</span></td>
+            </tr>
+            <tr class="test-row" data-test="20">
+              <td><div class="td-title">Decimal Place Value and Notation</div></td>
+              <td><span class="type-badge formative">Formative</span></td>
+              <td>5</td><td>50</td>
+              <td><span class="td-date">10 Jun 2026</span></td>
+              <td><span class="status-badge draft">Draft</span></td>
+            </tr>
+            <tr class="test-row" data-test="21">
+              <td><div class="td-title">Adding and Subtracting Decimals</div></td>
+              <td><span class="type-badge formative">Formative</span></td>
+              <td>4</td><td>40</td>
+              <td><span class="td-date">17 Jun 2026</span></td>
+              <td><span class="status-badge draft">Draft</span></td>
+            </tr>
+            <tr class="test-row" data-test="22">
+              <td><div class="td-title">Properties of Multiplication and Division</div></td>
+              <td><span class="type-badge formative">Formative</span></td>
+              <td>4</td><td>40</td>
+              <td><span class="td-date">24 Jun 2026</span></td>
+              <td><span class="status-badge draft">Draft</span></td>
+            </tr>
+            <tr class="test-row" data-test="23">
+              <td><div class="td-title">Line Plots and Data Interpretation</div></td>
+              <td><span class="type-badge formative">Formative</span></td>
+              <td>3</td><td>30</td>
+              <td><span class="td-date">01 Jul 2026</span></td>
+              <td><span class="status-badge draft">Draft</span></td>
+            </tr>
+            <tr class="test-row" data-test="24">
+              <td><div class="td-title">Problem Solving with Fractions</div></td>
+              <td><span class="type-badge formative">Formative</span></td>
+              <td>5</td><td>50</td>
+              <td><span class="td-date">08 Jul 2026</span></td>
+              <td><span class="status-badge draft">Draft</span></td>
+            </tr>
+            <tr class="test-row" data-test="25">
+              <td><div class="td-title">Angles – Measuring and Classifying</div></td>
+              <td><span class="type-badge formative">Formative</span></td>
+              <td>6</td><td>60</td>
+              <td><span class="td-date">15 Jul 2026</span></td>
               <td><span class="status-badge draft">Draft</span></td>
             </tr>
           </tbody>
@@ -971,6 +1102,7 @@
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
           </div>
           <span class="back-title-text" id="detail-title">Math Grade 5 Test</span>
+          <span id="detail-title-status"></span>
         </div>
 
         <div class="detail-actions">
@@ -1024,11 +1156,6 @@
               <input class="field-input" id="detail-in-type" type="text">
             </div>
             <div class="field-group">
-              <div class="field-label">Status</div>
-              <div class="view-field" id="detail-vf-status"></div>
-              <input class="field-input" id="detail-in-status" type="text">
-            </div>
-            <div class="field-group">
               <div class="field-label">Date of Test</div>
               <div class="view-field" id="detail-vf-date"></div>
               <input class="field-input" id="detail-in-date" type="text">
@@ -1067,35 +1194,8 @@
             Test Structure
           </div>
         </div>
-        <div class="panel-body">
-          <div class="ts-part">
-            <div class="ts-part-header">
-              <div class="ts-part-left">
-                Part A
-                <span class="chip">nonlinear</span>
-                <span class="chip">individual</span>
-              </div>
-            </div>
-            <div class="ts-section">
-              <div class="ts-section-header">
-                <div class="ts-section-left">
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
-                  Part A – Section 1
-                  <span class="chip count">2 items</span>
-                </div>
-              </div>
-              <div class="ts-items">
-                <div class="ts-item">
-                  <div class="ts-item-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
-                  <div class="ts-item-name">My First Choice Interaction <span class="ts-item-id">item_my_first_choice_inte</span><span class="chip required">Required</span><span class="chip">Fixed</span></div>
-                </div>
-                <div class="ts-item">
-                  <div class="ts-item-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
-                  <div class="ts-item-name">My First Gap Match <span class="ts-item-id">item_my_first_gap_match</span><span class="chip required">Required</span><span class="chip">Fixed</span></div>
-                </div>
-              </div>
-            </div>
-          </div>
+        <div class="panel-body" id="detail-structure-body" style="font-size:12px;color:#444;line-height:1.6">
+          <div style="font-size:12px;color:#bbb;padding:4px 0">No structure data available.</div>
         </div>
       </div>
 
@@ -1115,22 +1215,35 @@
         <span class="back-title-text">New Test</span>
       </div>
 
-      <!-- Progress -->
-      <div class="wz-progress"><div class="wz-progress-fill" id="wz-progress-fill" style="width:25%"></div></div>
-
-      <!-- Step tabs -->
-      <div class="wz-steps">
-        <div class="wz-step active" id="wz-step-tab-1" onclick="wzGoToStep(1)"><span class="wz-step-num">1</span> Name Test</div>
-        <div class="wz-step" id="wz-step-tab-2" onclick="wzGoToStep(2)"><span class="wz-step-num">2</span> Add Sections</div>
-        <div class="wz-step" id="wz-step-tab-3" onclick="wzGoToStep(3)"><span class="wz-step-num">3</span> Pick Items</div>
-        <div class="wz-step" id="wz-step-tab-4" onclick="wzGoToStep(4)"><span class="wz-step-num">4</span> Schedule</div>
+      <!-- Stepper -->
+      <div class="wz-stepper">
+        <div class="wz-stepper-item active" id="wz-step-tab-1" onclick="wzGoToStep(1)">
+          <div class="wz-stepper-circle">1</div>
+          <div class="wz-stepper-label">Name Test</div>
+        </div>
+        <div class="wz-stepper-item" id="wz-step-tab-2" onclick="wzGoToStep(2)">
+          <div class="wz-stepper-circle">2</div>
+          <div class="wz-stepper-label">Add Sections</div>
+        </div>
+        <div class="wz-stepper-item" id="wz-step-tab-3" onclick="wzGoToStep(3)">
+          <div class="wz-stepper-circle">3</div>
+          <div class="wz-stepper-label">Pick Items</div>
+        </div>
+        <div class="wz-stepper-item" id="wz-step-tab-4" onclick="wzGoToStep(4)">
+          <div class="wz-stepper-circle">4</div>
+          <div class="wz-stepper-label">Review</div>
+        </div>
+        <div class="wz-stepper-item" id="wz-step-tab-5" onclick="wzGoToStep(5)">
+          <div class="wz-stepper-circle">5</div>
+          <div class="wz-stepper-label">Schedule</div>
+        </div>
       </div>
 
       <!-- STEP 1: Name Test -->
       <div id="wz-step-1">
         <div class="wz-card">
           <div class="wz-card-title">Name your test</div>
-          <div class="wz-card-desc">Give this test a clear name, select a course and add access details.</div>
+          <div class="wz-card-desc">Give your test a meaningful name and select the course it belongs to.</div>
           <div class="field-group" style="margin-bottom:16px">
             <div class="field-label">Name <span class="req">*</span></div>
             <input class="field-input" id="wz-test-name" type="text" placeholder="e.g. Grade 5 Mathematics — Term 2 Assessment" maxlength="80">
@@ -1146,39 +1259,19 @@
               <div class="field-label">Course <span class="req">*</span></div>
               <select class="field-input" id="wz-test-course">
                 <option value="" disabled selected>Select course…</option>
-                <option value="grade1-math">Grade 1 Mathematics</option>
-                <option value="grade1-ela">Grade 1 English Language Arts</option>
-                <option value="grade2-math">Grade 2 Mathematics</option>
-                <option value="grade2-ela">Grade 2 English Language Arts</option>
-                <option value="grade3-math">Grade 3 Mathematics</option>
-                <option value="grade3-ela">Grade 3 English Language Arts</option>
-                <option value="grade4-math">Grade 4 Mathematics</option>
-                <option value="grade4-ela">Grade 4 English Language Arts</option>
-                <option value="grade5-math">Grade 5 Mathematics</option>
-                <option value="grade5-ela">Grade 5 English Language Arts</option>
+                <option value="grade6-math">Grade 6 Mathematics</option>
+                <option value="grade6-ela">Grade 6 English Language Arts</option>
+                <option value="grade7-math">Grade 7 Mathematics</option>
+                <option value="grade7-ela">Grade 7 English Language Arts</option>
+                <option value="grade8-math">Grade 8 Mathematics</option>
+                <option value="grade8-ela">Grade 8 English Language Arts</option>
               </select>
-            </div>
-          </div>
-          <div class="grid-2" style="margin-bottom:16px">
-            <div class="field-group">
-              <div class="field-label">Start Date</div>
-              <input class="field-input" id="wz-start-date" type="date">
-            </div>
-            <div class="field-group">
-              <div class="field-label">End Date</div>
-              <input class="field-input" id="wz-end-date" type="date">
-            </div>
-          </div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-            <div class="field-group">
-              <div class="field-label">Class Access Code</div>
-              <input class="field-input" id="wz-access-code" type="text" placeholder="e.g. MATH2024">
             </div>
           </div>
         </div>
         <div class="wz-nav">
-          <button class="btn-ghost" id="wz-btn-cancel">Cancel</button>
           <div class="wz-nav-right">
+            <button class="btn-ghost" id="wz-btn-cancel">Cancel</button>
             <button class="btn-primary" onclick="wzGoToStep(2)">Next: Add Sections →</button>
           </div>
         </div>
@@ -1188,7 +1281,7 @@
       <div id="wz-step-2" class="wz-hidden">
         <div class="wz-card">
           <div class="wz-card-title">Add sections</div>
-          <div class="wz-card-desc">Break your test into topics or parts. Each section will contain its own items. Drag to reorder.</div>
+          <div class="wz-card-desc">Organise your test into sections by topic or part, then drag to reorder them.</div>
           <div class="wz-sections-list" id="wz-sections-list"></div>
           <div class="wz-add-section-row">
             <input class="field-input" id="wz-new-section-input" type="text" placeholder="Section name (e.g. Algebra)" maxlength="50" onkeydown="if(event.key==='Enter') wzAddSection()">
@@ -1196,8 +1289,8 @@
           </div>
         </div>
         <div class="wz-nav">
-          <button class="btn-ghost" onclick="wzGoToStep(1)">← Back</button>
           <div class="wz-nav-right">
+            <button class="btn-ghost" onclick="wzGoToStep(1)">← Back</button>
             <button class="btn-primary" onclick="wzGoToStep(3)">Next: Pick Items →</button>
           </div>
         </div>
@@ -1221,10 +1314,9 @@
                 <input type="text" id="wz-search-input" placeholder="Search items…" oninput="wzFilterQuestions()">
               </div>
               <div class="wz-filter-chips">
-                <span class="wz-chip active" onclick="wzSetFilter(this,'all')">All types</span>
-                <span class="wz-chip" onclick="wzSetFilter(this,'mc')">Multiple Choice</span>
-                <span class="wz-chip" onclick="wzSetFilter(this,'tf')">True / False</span>
-                <span class="wz-chip" onclick="wzSetFilter(this,'sa')">Short Answer</span>
+                <span class="wz-chip" onclick="wzToggleFilter(this,'mc')">Multiple Choice</span>
+                <span class="wz-chip" onclick="wzToggleFilter(this,'tf')">True / False</span>
+                <span class="wz-chip" onclick="wzToggleFilter(this,'sa')">Short Answer</span>
               </div>
               <div class="wz-question-list" id="wz-question-list"></div>
             </div>
@@ -1236,7 +1328,7 @@
               </div>
               <div class="wz-selected-list" id="wz-selected-list">
                 <div class="wz-empty-state">
-                  <div class="wz-empty-icon">👈</div>
+                  <div class="wz-empty-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></div>
                   <div class="wz-empty-text">Click an item to add it<br>to this section</div>
                 </div>
               </div>
@@ -1244,30 +1336,39 @@
           </div>
         </div>
         <div class="wz-nav">
-          <button class="btn-ghost" onclick="wzGoToStep(2)">← Back</button>
           <div class="wz-nav-right">
-            <button class="btn-primary" onclick="wzGoToStep(4)">Schedule →</button>
+            <button class="btn-ghost" onclick="wzGoToStep(2)">← Back</button>
+            <button class="btn-primary" onclick="wzGoToStep(4)">Next: Review →</button>
           </div>
         </div>
       </div>
 
-      <!-- STEP 4: Schedule -->
+      <!-- STEP 4: Review -->
       <div id="wz-step-4" class="wz-hidden">
+        <div class="wz-card">
+          <div class="wz-card-title">Review your test</div>
+          <div class="wz-card-desc">Check your sections and selected items before scheduling.</div>
+          <div id="wz-review-sections"></div>
+        </div>
+        <div class="wz-nav">
+          <div class="wz-nav-right">
+            <button class="btn-ghost" onclick="wzGoToStep(3)">← Back</button>
+            <button class="btn-primary" onclick="wzGoToStep(5)">Next: Schedule →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 5: Schedule -->
+      <div id="wz-step-5" class="wz-hidden">
         <div class="wz-schedule-layout">
           <!-- Main column -->
           <div>
 
-            <!-- Selected Items Review -->
-            <div class="wz-card" style="margin-bottom:16px">
-              <div class="wz-schedule-section-header">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#75138c" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-                Selected Items
-              </div>
-              <div id="wz-review-sections"></div>
-            </div>
+            <!-- Schedule settings: single card -->
+            <div class="wz-card">
 
             <!-- When to Deploy -->
-            <div class="wz-card" style="margin-bottom:16px">
+            <div>
               <div class="wz-schedule-section-header">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#75138c" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
                 When to Deploy
@@ -1294,15 +1395,14 @@
                   </div>
                 </label>
               </div>
-              <!-- Date/time pickers, shown when Schedule For Later selected -->
               <div id="wz-schedule-datetime" style="display:none;margin-top:14px">
                 <div class="grid-2">
                   <div class="field-group">
-                    <div class="field-label">Open Date</div>
+                    <div class="field-label">Date</div>
                     <input class="field-input" type="date" id="wz-schedule-date">
                   </div>
                   <div class="field-group">
-                    <div class="field-label">Open Time</div>
+                    <div class="field-label">Time</div>
                     <input class="field-input" type="time" id="wz-schedule-time">
                   </div>
                 </div>
@@ -1310,7 +1410,7 @@
             </div>
 
             <!-- Assign To -->
-            <div class="wz-card" style="margin-bottom:16px">
+            <div style="border-top:1px solid #f0f0f0;margin-top:24px;padding-top:24px">
               <div class="wz-schedule-section-header">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#75138c" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
                 Assign To
@@ -1337,7 +1437,6 @@
                   </div>
                 </label>
               </div>
-              <!-- Student selector, shown when Specific Students selected -->
               <div id="wz-students-panel" style="display:none;margin-top:14px">
                 <div class="wz-search-bar" style="margin-bottom:8px">
                   <svg class="wz-search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -1349,7 +1448,7 @@
             </div>
 
             <!-- Estimated Duration -->
-            <div class="wz-card" style="margin-bottom:16px">
+            <div style="border-top:1px solid #f0f0f0;margin-top:24px;padding-top:24px">
               <div class="wz-schedule-section-header">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#75138c" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                 Estimated Duration
@@ -1366,7 +1465,7 @@
             </div>
 
             <!-- Special Instructions -->
-            <div class="wz-card">
+            <div style="border-top:1px solid #f0f0f0;margin-top:24px;padding-top:24px">
               <div class="wz-schedule-section-header" style="justify-content:space-between">
                 <span style="display:flex;align-items:center;gap:8px">
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#75138c" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
@@ -1376,6 +1475,8 @@
               </div>
               <textarea class="field-input" id="wz-instructions" rows="4" placeholder="e.g. Students may use a calculator. No collaboration permitted. Read all items carefully before answering." style="resize:vertical;margin-top:4px"></textarea>
             </div>
+
+            </div><!-- /single schedule card -->
           </div>
 
           <!-- Summary sidebar -->
@@ -1391,8 +1492,8 @@
         </div>
 
         <div class="wz-nav">
-          <button class="btn-ghost" onclick="wzGoToStep(3)">← Back</button>
           <div class="wz-nav-right">
+            <button class="btn-ghost" onclick="wzGoToStep(4)">← Back</button>
             <button class="btn-ghost" id="wz-btn-draft">Save as Draft</button>
             <button class="btn-primary" id="wz-btn-save">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
@@ -1487,20 +1588,7 @@
             Test Structure
           </div>
           <div class="ref-panel-body">
-            <div class="ref-section-title">Hierarchy</div>
-            <ul class="hierarchy-tree">
-              <li><svg class="ht-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#2a3766" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><div><span class="ht-label">Assessment Test</span><span class="ht-note">Top level</span></div></li>
-              <li class="l1"><svg class="ht-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg><div><span class="ht-label">Test Part</span><span class="ht-note">At least 1 required</span></div></li>
-              <li class="l2"><svg class="ht-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg><div><span class="ht-label">Assessment Section</span><span class="ht-note">At least 1 per part</span></div></li>
-              <li class="l3"><svg class="ht-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#d4962a" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><div><span class="ht-label">Item References</span><span class="ht-note">Links to TEI items</span></div></li>
-            </ul>
-            <div class="ref-section-title">Key Attributes</div>
-            <ul class="key-list">
-              <li><div><strong>Navigation:</strong> Linear or Nonlinear</div></li>
-              <li><div><strong>Submission:</strong> Individual or Simultaneous</div></li>
-              <li><div><strong>Time Limits:</strong> Test, part, or section level</div></li>
-              <li><div><strong>Sections:</strong> Can be nested</div></li>
-            </ul>
+            <div style="font-size:12px;color:#bbb;padding:8px 0">Select a test to view its structure.</div>
           </div>
         </div>
       </div>
@@ -1540,12 +1628,11 @@
     // Filter
     let visible = allRows.filter(row => {
       const name = getCellText(row, 0).toLowerCase();
-      const id   = getCellText(row, 1).toLowerCase();
-      const type = getCellText(row, 2).trim();
+      const type = getCellText(row, 1).trim();
       const status = getCellText(row, 5).trim();
       const q = searchQuery.toLowerCase();
-      const matchSearch = !q || name.includes(q) || id.includes(q);
-      const matchType   = typeFilters.size === 0 || typeFilters.has(type);
+      const matchSearch = !q || name.includes(q);
+      const matchType   = type === 'Formative';
       const matchStatus = statusFilters.size === 0 || statusFilters.has(status);
       return matchSearch && matchType && matchStatus;
     });
@@ -1677,7 +1764,6 @@
     });
   }
 
-  initFilterDropdown('type-filter-btn', 'type-filter-dropdown', 'type-filter-clear', 'type-select-all', typeFilters);
   initFilterDropdown('status-filter-btn', 'status-filter-dropdown', 'status-filter-clear', 'status-select-all', statusFilters);
 
   // Close on outside click
@@ -1698,17 +1784,76 @@
   });
 
   // ── Test list: click row → detail view ──
+  // ── Test structure mock data ──────────────────────────────────────────────
+  const TEST_STRUCTURES = {
+    1:  [{ name:'Place Value', color:'#2a3766', items:[8,9,10,11] }, { name:'Number Sense', color:'#75138c', items:[12,13,14,15] }],
+    2:  [{ name:'Addition', color:'#2dbe6c', items:[1,2,3] }, { name:'Subtraction', color:'#ff8c42', items:[4,5] }],
+    3:  [{ name:'Concepts', color:'#4a6cf7', items:[3,4,5] }, { name:'Strategies', color:'#75138c', items:[6,7,8] }],
+    4:  [{ name:'Division Facts', color:'#2a3766', items:[9,10,11] }],
+    5:  [{ name:'Estimation', color:'#ff8c42', items:[12,13] }, { name:'Standard Algorithm', color:'#2a3766', items:[14,15] }],
+    6:  [{ name:'Equivalence', color:'#2dbe6c', items:[8,9,10] }, { name:'Ordering', color:'#4a6cf7', items:[11,12] }],
+    7:  [{ name:'Like Denominators', color:'#75138c', items:[9,10] }, { name:'Unlike Denominators', color:'#ff8c42', items:[11,12] }],
+    8:  [{ name:'Tenths', color:'#2a3766', items:[7,8,9] }, { name:'Hundredths', color:'#2dbe6c', items:[10,11] }],
+    9:  [{ name:'Measurement Concepts', color:'#4a6cf7', items:[14,15,16] }],
+    10: [{ name:'Area', color:'#75138c', items:[14,15] }, { name:'Perimeter', color:'#ff8c42', items:[16,17] }],
+    11: [{ name:'Elapsed Time', color:'#2a3766', items:[15,16,17] }, { name:'Schedules', color:'#2dbe6c', items:[18,19] }],
+    12: [{ name:'Angles', color:'#4a6cf7', items:[14,15,16] }, { name:'Lines', color:'#75138c', items:[17,18,19] }],
+    13: [{ name:'2D Shapes', color:'#ff8c42', items:[3,4,5] }, { name:'Symmetry', color:'#2a3766', items:[6,7] }],
+    14: [{ name:'Tables', color:'#2dbe6c', items:[20,1] }, { name:'Bar Graphs & Line Plots', color:'#4a6cf7', items:[2,3] }],
+    15: [{ name:'Number Patterns', color:'#2a3766', items:[1,2,3] }],
+    16: [{ name:'Nearest 10', color:'#75138c', items:[4,5] }, { name:'Nearest 100', color:'#ff8c42', items:[6,7] }],
+    17: [{ name:'Factors', color:'#2dbe6c', items:[8,9,10] }, { name:'Multiples', color:'#4a6cf7', items:[11,12] }],
+    18: [{ name:'Comparing Fractions', color:'#2a3766', items:[8,9,10] }, { name:'Mixed Numbers', color:'#75138c', items:[11,12] }],
+    19: [{ name:'Ratio Concepts', color:'#ff8c42', items:[7,8,9] }, { name:'Rate Problems', color:'#2dbe6c', items:[10,11] }],
+    20: [{ name:'Mean & Median', color:'#4a6cf7', items:[20,1,2] }],
+    21: [{ name:'Probability', color:'#75138c', items:[19,20,1] }, { name:'Outcomes', color:'#2a3766', items:[2,3] }],
+    22: [{ name:'3D Shapes', color:'#ff8c42', items:[14,15] }, { name:'Volume', color:'#2dbe6c', items:[16,17,18] }],
+    23: [{ name:'Coordinates', color:'#2a3766', items:[5,6,7] }, { name:'Transformations', color:'#4a6cf7', items:[8,9] }],
+    24: [{ name:'Equations', color:'#75138c', items:[1,2,3,4] }],
+    25: [{ name:'Word Problems', color:'#ff8c42', items:[17,18,19,20] }, { name:'Multi-Step', color:'#2a3766', items:[5,6] }],
+  };
+
+  function renderDetailStructure(testId) {
+    const panel = document.getElementById('detail-structure-body');
+    if (!panel) return;
+    const sections = TEST_STRUCTURES[testId];
+    if (!sections) { panel.innerHTML = '<div style="font-size:12px;color:#bbb;padding:8px 0">No structure data available.</div>'; return; }
+    const typeLabels = { mc:'MC', tf:'T/F', sa:'SA' };
+    let html = '';
+    sections.forEach(s => {
+      const items = s.items.map(id => WZ_QUESTIONS.find(q => q.id === id)).filter(Boolean);
+      html += `<div class="wz-review-section">
+        <div class="wz-review-section-header">
+          <span style="width:8px;height:8px;border-radius:50%;background:${s.color};display:inline-block;flex-shrink:0"></span>
+          ${s.name} <span style="font-weight:400;color:#999">(${items.length} item${items.length !== 1 ? 's' : ''})</span>
+        </div>
+        ${items.map((q, i) => {
+          const txt = q.text.length > 80 ? q.text.slice(0, 80) + '…' : q.text;
+          const tag = typeLabels[q.type] || q.type;
+          return `<div class="wz-review-item"><span class="wz-review-item-num">${i + 1}.</span><span style="flex:1">${txt}</span><span class="wz-q-tag wz-tag-${q.type}" style="flex-shrink:0;align-self:flex-start">${tag}</span></div>`;
+        }).join('')}
+      </div>`;
+    });
+    panel.innerHTML = html;
+  }
+
   document.querySelectorAll('.test-row').forEach(row => {
     row.addEventListener('click', () => {
       const cells = row.querySelectorAll('td');
-      const name      = cells[0] ? cells[0].querySelector('.td-title')?.textContent.trim() : '';
-      const type      = cells[1] ? cells[1].textContent.trim() : '';
-      const structure = cells[2] ? cells[2].textContent.trim() : '';
-      const date      = cells[3] ? cells[3].textContent.trim() : '';
-      const status    = cells[4] ? cells[4].textContent.trim() : '';
+      const name   = cells[0] ? cells[0].querySelector('.td-title')?.textContent.trim() : '';
+      const type   = cells[1] ? cells[1].textContent.trim() : '';
+      const items  = cells[2] ? cells[2].textContent.trim() : '';
+      const points = cells[3] ? cells[3].textContent.trim() : '';
+      const date   = cells[4] ? cells[4].textContent.trim() : '';
+      const status = cells[5] ? cells[5].textContent.trim() : '';
 
       // Header title
       document.getElementById('detail-title').textContent = name;
+      const statusEl = document.getElementById('detail-title-status');
+      if (statusEl) {
+        statusEl.textContent = status;
+        statusEl.className = 'status-badge ' + status.toLowerCase();
+      }
 
       // Populate view fields and inputs
       const set = (vfId, inId, val) => {
@@ -1721,6 +1866,9 @@
       set('detail-vf-status',      'detail-in-status',      status);
       set('detail-vf-date',        'detail-in-date',        date);
       set('detail-vf-description', 'detail-in-description', '');
+
+      const testId = parseInt(row.getAttribute('data-test'), 10);
+      renderDetailStructure(testId);
 
       setMetadataMode('view');
       showPage('view-test', 'test-management');
@@ -1822,7 +1970,7 @@
 
   const wz = {
     step:1, testName:'', testType:'formative', course:'', startDate:'', endDate:'', accessCode:'',
-    sections:[], selections:{}, activeSection:null, activeFilter:'all',
+    sections:[], selections:{}, activeSection:null, activeFilters:new Set(),
     deployNow:true, assignAll:true, duration:3
   };
 
@@ -1835,20 +1983,19 @@
 
   function wzReset() {
     Object.assign(wz, { step:1, testName:'', testType:'formative', course:'', startDate:'', endDate:'', accessCode:'',
-      sections:[], selections:{}, activeSection:null, activeFilter:'all', deployNow:true, assignAll:true, duration:3 });
-    ['wz-test-name','wz-access-code','wz-start-date','wz-end-date'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
+      sections:[], selections:{}, activeSection:null, activeFilters:new Set(), deployNow:true, assignAll:true, duration:3 });
+    ['wz-test-name'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
     document.getElementById('wz-test-course').value = '';
     document.getElementById('wz-new-section-input').value = '';
     document.getElementById('wz-search-input').value = '';
-    document.querySelectorAll('.wz-chip').forEach((c,i) => c.classList.toggle('active', i === 0));
+    document.querySelectorAll('.wz-chip').forEach(c => c.classList.remove('active'));
     wzRenderSections();
-    [1,2,3,4].forEach(i => {
+    [1,2,3,4,5].forEach(i => {
       document.getElementById('wz-step-'+i).classList.toggle('wz-hidden', i !== 1);
       const tab = document.getElementById('wz-step-tab-'+i);
       tab.classList.remove('active','done');
       if (i === 1) tab.classList.add('active');
     });
-    document.getElementById('wz-progress-fill').style.width = '25%';
   }
 
   function wzGoToStep(n) {
@@ -1859,9 +2006,6 @@
         if (!name) { wzShowToast('Please enter a test name first'); return; }
         wz.testName = name;
         wz.course = document.getElementById('wz-test-course').value;
-        wz.startDate = document.getElementById('wz-start-date').value;
-        wz.endDate = document.getElementById('wz-end-date').value;
-        wz.accessCode = document.getElementById('wz-access-code').value.trim();
       }
       if (n > 2 && wz.sections.length === 0) { wzShowToast('Add at least one section first'); return; }
     } else {
@@ -1872,16 +2016,16 @@
       }
     }
     wz.step = n;
-    [1,2,3,4].forEach(i => {
+    [1,2,3,4,5].forEach(i => {
       document.getElementById('wz-step-'+i).classList.toggle('wz-hidden', i !== n);
       const tab = document.getElementById('wz-step-tab-'+i);
       tab.classList.remove('active','done');
       if (i === n) tab.classList.add('active');
       else if (i < n) tab.classList.add('done');
     });
-    document.getElementById('wz-progress-fill').style.width = (n * 25) + '%';
     if (n === 3) wzRenderStep3();
-    if (n === 4) wzRenderScheduleSummary();
+    if (n === 4) wzRenderReviewItems();
+    if (n === 5) wzRenderScheduleSummary();
   }
 
   // ── Step 2: Sections with drag-and-drop ──
@@ -1913,7 +2057,6 @@
         <span class="wz-drag-handle" title="Drag to reorder">⠿</span>
         <span class="wz-section-color" style="background:${s.color}"></span>
         <input type="text" value="${wzEsc(s.name)}" onchange="wz.sections[${i}].name=this.value" placeholder="Section name">
-        <span class="wz-section-count">${(wz.selections[s.id]||[]).length} items</span>
         <button class="btn-ghost" style="padding:4px 8px;font-size:11px;border-radius:4px" onclick="wzRemoveSection(${s.id})">✕</button>
       </div>`).join('');
   }
@@ -1945,22 +2088,22 @@
   }
   function wzDragLeave(e) { /* no-op: transforms handle visual feedback */ }
   function wzDragEnd(e) {
+    const src = wzDragSrcIdx;
+    const tgt = wzDragTargetIdx;
     document.querySelectorAll('.wz-section-item').forEach(el => {
       el.classList.remove('wz-dragging');
       el.style.transform = '';
     });
     wzDragSrcIdx = null; wzDragTargetIdx = null;
+    if (src !== null && tgt !== null && src !== tgt) {
+      const moved = wz.sections.splice(src, 1)[0];
+      wz.sections.splice(tgt, 0, moved);
+      wzRenderSections();
+    }
   }
   function wzDrop(e, idx) {
     e.preventDefault();
-    const src = wzDragSrcIdx;
-    // Clear transforms immediately before re-render
-    document.querySelectorAll('.wz-section-item').forEach(el => { el.style.transform = ''; el.classList.remove('wz-dragging'); });
-    wzDragSrcIdx = null; wzDragTargetIdx = null;
-    if (src === null || src === idx) return;
-    const moved = wz.sections.splice(src, 1)[0];
-    wz.sections.splice(idx, 0, moved);
-    wzRenderSections();
+    wzDragTargetIdx = idx;
   }
 
   // ── Step 3: Items ──
@@ -1980,25 +2123,28 @@
 
   function wzSwitchSection(id) { wz.activeSection = id; wzRenderSectionTabs(); wzFilterQuestions(); wzRenderSelected(); }
 
-  function wzSetFilter(el, filter) {
-    wz.activeFilter = filter;
-    document.querySelectorAll('.wz-chip').forEach(c => c.classList.remove('active'));
-    el.classList.add('active');
+  function wzToggleFilter(el, filter) {
+    if (wz.activeFilters.has(filter)) {
+      wz.activeFilters.delete(filter);
+      el.classList.remove('active');
+    } else {
+      wz.activeFilters.add(filter);
+      el.classList.add('active');
+    }
     wzFilterQuestions();
   }
 
   function wzFilterQuestions() {
     const search = (document.getElementById('wz-search-input').value || '').toLowerCase();
-    const filter = wz.activeFilter;
-    // Items in the active section are shown as selected; items in OTHER sections are hidden
     const activeSel = new Set(wz.selections[wz.activeSection] || []);
     const allAssigned = wzAllAssigned();
 
+    const activeFilters = wz.activeFilters;
     const filtered = WZ_QUESTIONS.filter(q => {
-      // Hide items assigned to a different section
-      if (allAssigned.has(q.id) && !activeSel.has(q.id)) return false;
+      // Hide items already assigned to any section
+      if (allAssigned.has(q.id)) return false;
       const matchSearch = !search || q.text.toLowerCase().includes(search);
-      const matchType = filter === 'all' || filter === q.type;
+      const matchType = !activeFilters || activeFilters.size === 0 || activeFilters.has(q.type);
       return matchSearch && matchType;
     });
 
@@ -2010,9 +2156,8 @@
       return;
     }
     list.innerHTML = filtered.map(q => {
-      const sel = activeSel.has(q.id);
-      return `<div class="wz-q-item ${sel?'selected':''}" onclick="wzAddQuestion(${q.id})">
-        <span class="wz-q-add-icon">${sel?'✓':'+'}</span>
+      return `<div class="wz-q-item" onclick="wzAddQuestion(${q.id})">
+        <span class="wz-q-add-icon">+</span>
         <div><div class="wz-q-text">${wzEsc(q.text)}</div>
         <div class="wz-q-meta"><span class="wz-q-tag wz-tag-${q.type}">${typeLabels[q.type]}</span></div>
         </div></div>`;
@@ -2036,7 +2181,7 @@
     document.getElementById('wz-selected-count').textContent = sel.length;
     const list = document.getElementById('wz-selected-list');
     if (!sel.length) {
-      list.innerHTML = `<div class="wz-empty-state"><div class="wz-empty-icon">👈</div><div class="wz-empty-text">Click an item to add it<br>to this section</div></div>`;
+      list.innerHTML = `<div class="wz-empty-state"><div class="wz-empty-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></div><div class="wz-empty-text">Click an item to add it<br>to this section</div></div>`;
       return;
     }
     list.innerHTML = sel.map((qId, i) => {
